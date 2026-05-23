@@ -20,7 +20,7 @@ in constructing prediction intervals for time series
 \citep{xu2023conformal, xu2023sequential, barber2023conformal},
 but the problem of \emph{seasonal} heteroskedasticity has
 received comparatively little attention.  The standard
-approach --- which we call \emph{pooled calibration} ---
+approach, which we call \emph{pooled calibration},
 calibrates intervals on a single buffer of residuals drawn
 from all seasons indiscriminately.  When the distribution of
 forecast errors varies by season, pooled calibration introduces
@@ -45,7 +45,7 @@ This paper makes three contributions.
 \item \emph{The \texttt{EnbPI-S} algorithm.}
   We introduce \texttt{EnbPI-S} (Algorithm~\ref{alg:enbpis}),
   a stratified extension of EnbPI that maintains $\Sper$ separate
-  calibration buffers --- one per calendar season.  The only
+  calibration buffers (one per calendar season).  The only
   departure from EnbPI is in the calibration step: the line
   search for the optimal asymmetric quantile pair uses only
   residuals from the same season as the prediction target.
@@ -116,8 +116,8 @@ The simulation study also benchmarks \texttt{EnbPI-S} against
 SARIMA$(1,0,0)(1,0,0)_{12}$ with Gaussian prediction intervals,
 the standard parametric alternative.
 SARIMA is correctly specified for the seasonal mean of our DGP,
-so its failure --- September coverage of $66.2\%$ against
-the $90\%$ nominal --- is attributable entirely to two
+so its failure (September coverage of $66.2\%$ against
+the $90\%$ nominal) is attributable entirely to two
 compounding distributional misspecifications:
 Gaussian tails (underestimating the heavy $t_3$ innovations)
 and a single pooled $\hat{\sigma}$ (ignoring seasonal variance
