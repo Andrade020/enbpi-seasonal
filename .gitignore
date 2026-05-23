@@ -9,6 +9,7 @@
 *.fls
 *.synctex.gz
 *.pdf
+!figures/*.pdf
 
 # Keep generated tables and figures (they are small and reproducible)
 # but exclude large outputs if needed

@@ -97,59 +97,29 @@ greater harvest-price uncertainty; those with the narrowest
 intervals --- February, October, January ---
 correspond to more predictable stretches of the food-price cycle.
 
-Figure~\ref{fig:empirical_food_width} illustrates this
-contrast: the Pooled bars are flat, while the
-\texttt{EnbPI-S} bars track the seasonal uncertainty rhythm
-of Brazilian food prices.
+Figure~\ref{fig:empirical_food_width_time} illustrates this
+contrast: the Pooled band (red) is nearly flat throughout the
+decade, while the \texttt{EnbPI-S} band (blue) visibly pulses
+with the food-price seasonal calendar --- widening in May--June
+and narrowing in February and October.
+The bottom panel confirms the pattern across all twelve months:
+the pooled bars are essentially uniform, while the
+\texttt{EnbPI-S} bars track the seasonal uncertainty rhythm of
+Brazilian food prices.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/fig_empirical_food_width}
-  \caption{Average interval width by season for the food-at-home
-           IPCA forecasting application.
-           Training: 1995--2014; test: 2015--2024.
-           The pooled method produces a constant width ($\approx 1.82$ p.p.);
-           \texttt{EnbPI-S} allocates wider intervals to high-uncertainty months
-           (May--June) and narrower intervals to predictable months
-           (February, October).}
-  \label{fig:empirical_food_width}
-\end{figure}
-
-\paragraph{Time-series comparison.}
-Figure~\ref{fig:empirical_food_timeseries} shows the
-full ten-year test period for both methods alongside
-the realised food-at-home IPCA series.
-The visual contrast is immediate: the Pooled intervals
-form an essentially constant band throughout the year
-(uniform shading), while the \texttt{EnbPI-S} intervals
-visibly expand and contract with the seasonal calendar.
-The asymmetry is most pronounced in the May--June
-window of each year, where \texttt{EnbPI-S} widens its
-intervals to accommodate the pre-harvest uncertainty in
-food prices.
-Red circles mark the months where the realised value
-fell outside the interval; these are distributed
-similarly for both methods (consistent with similar
-overall coverage), but their seasonal concentration
-differs: missed observations under Pooled occur
-disproportionately in May--June (the under-calibrated
-months), whereas those under \texttt{EnbPI-S} are
-more evenly spread.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.95\textwidth]{figures/fig_empirical_food_timeseries}
-  \caption{Ninety-percent prediction intervals for monthly
-           food-at-home IPCA (test: 2015--2024).
-           Upper panel: Pooled EnbPI; lower panel: \texttt{EnbPI-S}.
-           Black line: realised IPCA food variation (m/m, \%).
-           Red circles: months where the realised value fell
-           outside the interval.
-           The Pooled band is nearly constant in width; the
-           \texttt{EnbPI-S} band expands visibly in May--June
-           of each year, correctly tracking seasonal forecast
-           uncertainty.}
-  \label{fig:empirical_food_timeseries}
+  \includegraphics[width=0.95\textwidth]{figures/fig_empirical_food_width_time}
+  \caption{Interval width over time for food-at-home IPCA forecasting
+           (training: 1995--2014; test: 2015--2024).
+           \textit{Top panel}: interval width for each month of the
+           test period.  The Pooled method (red) maintains a nearly
+           constant width of $\approx 1.82$ p.p.;
+           \texttt{EnbPI-S} (blue) expands in May--June and
+           contracts in February and October.
+           \textit{Bottom panel}: mean interval width by calendar month.
+           Gold shading marks May--June (pre-harvest uncertainty months).}
+  \label{fig:empirical_food_width_time}
 \end{figure}
 
 \paragraph{Coverage.}
@@ -301,39 +271,29 @@ The pooled interval ($10.2\%$) is too narrow for this
 month, causing systematic undercoverage precisely when
 forecast risk is highest.
 
-Figure~\ref{fig:empirical_exports_timeseries} illustrates
-the contrast over the full test period.
+Figure~\ref{fig:empirical_exports_width_time} illustrates
+this contrast over the full test period: the Pooled band (red)
+is nearly flat at $\approx 10.2\%$ throughout, while the
+\texttt{EnbPI-S} band (blue) peaks in Q1 (harvest-onset) and
+troughs in Q3 (mid-year stable period).
+The bottom panel confirms that \texttt{EnbPI-S} correctly
+allocates maximum uncertainty to February--March and minimum
+uncertainty to July.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.95\textwidth]{figures/fig_empirical_exports_timeseries}
-  \caption{Ninety-percent prediction intervals for monthly
-           Brazilian export growth (BCB series 1402, log-return \%).
-           Upper panel: Pooled EnbPI; lower panel: \texttt{EnbPI-S}.
-           Black line: realised log-return.
-           Red circles: months where the realised value fell
-           outside the interval.
-           The Pooled band is nearly constant in width
-           ($\approx 10.2\%$); the \texttt{EnbPI-S} band expands
-           visibly in Q1 of each year (harvest-onset period) and
-           contracts in Q3 (mid-year stable period).}
-  \label{fig:empirical_exports_timeseries}
-\end{figure}
-
-Figure~\ref{fig:empirical_exports_width} confirms
-the seasonal width pattern with a bar chart:
-\texttt{EnbPI-S} correctly allocates maximum uncertainty
-to February--March and minimum uncertainty to July.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.85\textwidth]{figures/fig_empirical_exports_width}
-  \caption{Average interval width by season for the Brazilian
-           export growth application (test: 2015--2024).
-           The pooled method (red) is flat at $\approx 10.2\%$;
-           \texttt{EnbPI-S} (blue) peaks at $13.8\%$ in February
-           and troughs at $6.0\%$ in July, a ratio of $2.3\times$.}
-  \label{fig:empirical_exports_width}
+  \includegraphics[width=0.95\textwidth]{figures/fig_empirical_exports_width_time}
+  \caption{Interval width over time for Brazilian export growth
+           (training: 1979--2014; test: 2015--2024; BCB series 1402).
+           \textit{Top panel}: interval width for each month of the
+           test period.  The Pooled method (red) is nearly flat at
+           $\approx 10.2\%$; \texttt{EnbPI-S} (blue) peaks at
+           $13.8\%$ in February (soybean harvest-onset) and troughs
+           at $6.0\%$ in July, a ratio of $2.3\times$.
+           \textit{Bottom panel}: mean interval width by calendar month.
+           Gold shading marks February--March (harvest-onset uncertainty
+           months).}
+  \label{fig:empirical_exports_width_time}
 \end{figure}
 
 \paragraph{Cross-application summary.}
