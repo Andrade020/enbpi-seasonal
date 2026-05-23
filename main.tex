@@ -1,0 +1,194 @@
+%% ============================================================
+%% Distribution-Free Prediction Intervals for Seasonally
+%% Heteroskedastic Time Series
+%%
+%% Lucas Rafael de Andrade
+%% [Affiliation TBD]
+%%
+%% Target: Brazilian Review of Econometrics / Estudos Econômicos
+%% ============================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% --- Encoding & language ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+% --- Math ---
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}   % dcases, coloneqq, etc.
+\usepackage{bm}          % \bm for bold math
+
+% --- Layout ---
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Figures & tables ---
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+% --- Algorithms ---
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+
+% --- Bibliography ---
+\usepackage[round,authoryear]{natbib}
+\bibliographystyle{apalike}
+
+% --- Hyperlinks (load last among these) ---
+\usepackage[colorlinks=true,
+            linkcolor=blue!60!black,
+            citecolor=blue!60!black,
+            urlcolor=blue!60!black]{hyperref}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Check/cross marks (for simulation summary table) ---
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+% --- Internal comments (remove before submission) ---
+\usepackage{xcolor}
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\note}[1]{\textcolor{blue!70!black}{\textbf{[NOTE: #1]}}}
+
+% ============================================================
+%  THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{algorithm_def}[theorem]{Algorithm}  % named differently to avoid clash
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% ============================================================
+%  NOTATION MACROS
+%  (all notation is defined here; never hard-code in text)
+% ============================================================
+
+% --- Sets and indices ---
+\newcommand{\calT}{\mathcal{T}}       % index set T_s for stratum s
+\newcommand{\calA}{\mathcal{A}}       % prediction algorithm
+\newcommand{\calF}{\mathcal{F}}       % filtration
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+
+% --- Time series quantities ---
+\newcommand{\Yt}{Y_t}                  % response at t
+\newcommand{\Xt}{X_t}                  % feature vector at t
+\newcommand{\eps}{\epsilon_t}          % true error at t
+\newcommand{\epshat}{\hat{\epsilon}}   % estimated (LOO) residual
+\newcommand{\fhat}{\hat{f}}            % trained predictor
+\newcommand{\floo}{\hat{f}_{-t}}       % LOO predictor at t
+
+% --- CDFs ---
+\newcommand{\Ft}{F_t}                  % true CDF of epsilon_t
+\newcommand{\Fs}{F_s}                  % CDF of season s
+\newcommand{\Fbar}{\bar{F}}            % pooled (average) CDF
+\newcommand{\Ftilde}{\tilde{F}}        % empirical CDF of true errors
+\newcommand{\Fhat}{\hat{F}}            % empirical CDF of LOO residuals
+\newcommand{\FhatS}{\hat{F}_{s^*}}     % stratified empirical CDF
+
+% --- Prediction intervals ---
+\newcommand{\Chat}{\hat{C}_{t}^{\alpha}}              % EnbPI interval at t
+\newcommand{\Chatpool}{\hat{C}_{t}^{\alpha,\text{pool}}}   % pooled
+\newcommand{\Chatstrat}{\hat{C}_{t}^{\alpha,\text{strat}}} % stratified
+\newcommand{\Coracle}{C_{t}^{\alpha}}                 % oracle interval
+
+% --- Seasonal quantities ---
+\newcommand{\sstar}{s^*}               % season of prediction point T+1
+\newcommand{\Sper}{S}                  % seasonal period
+\newcommand{\Ts}{T_{\sstar}}           % stratum size for season s*
+\newcommand{\bsstar}{b_{\sstar}}       % seasonal bias
+\newcommand{\sigt}{\sigma_{s(t)}}      % seasonal standard deviation
+\newcommand{\sigs}{\sigma_s}           % std at season s
+
+% --- Estimation quality ---
+\newcommand{\deltaT}{\delta_T}         % estimation quality (full sample)
+\newcommand{\deltaTs}{\delta_{\Ts}}    % estimation quality (stratum)
+
+% --- Quantiles & p-values ---
+\newcommand{\betahat}{\hat{\beta}}     % optimal lower quantile
+\newcommand{\phat}{\hat{p}_{T+1}}     % empirical p-value
+\newcommand{\Quant}[2]{Q_{#1}\!\left(#2\right)} % Q_alpha(set)
+
+% --- Other ---
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\Ind}[1]{\mathbf{1}\!\left\{#1\right\}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\given}{\,\middle|\,}
+
+% ============================================================
+%  DOCUMENT
+% ============================================================
+\begin{document}
+
+% --- Title ---
+\title{Distribution-Free Prediction Intervals for Seasonally
+       Heteroskedastic Time Series\thanks{%
+         Acknowledgements TBD.
+         Code available at \url{https://github.com/TBD}.}}
+
+\author{Lucas Rafael de Andrade\thanks{%
+        [Affiliation TBD]. E-mail: \texttt{[TBD]}.}}
+
+\date{\today}
+
+\maketitle
+
+% ============================================================
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\noindent\textbf{Keywords:} conformal prediction; prediction intervals;
+seasonal heteroskedasticity; distribution-free inference; IPCA.
+
+\noindent\textbf{JEL Classification:} C14; C22; C53.
+
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================
+\input{sections/01_introduction}
+\input{sections/02_model}
+\input{sections/03_pooled_gap}
+\input{sections/04_algorithm}
+\input{sections/05_theory}
+\input{sections/06_simulations}
+\input{sections/07_empirical}
+\input{sections/08_conclusion}
+
+% ============================================================
+\newpage
+\bibliography{references}
+
+% ============================================================
+\appendix
+\input{sections/A_proofs}
+\input{sections/B_additional_results}
+
+\end{document}

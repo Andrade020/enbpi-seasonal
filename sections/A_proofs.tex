@@ -1,0 +1,365 @@
+% ============================================================
+% APPENDIX A — PROOFS
+% ============================================================
+\section{Proofs}
+\label{app:proofs}
+
+We collect the proofs of all stated results.  For clarity, we
+follow the notation of \citet{xu2023conformal} and explicitly
+identify where the seasonal structure introduces differences.
+Without loss of generality, we prove results for $t = T+1$
+(one-step-ahead prediction); extensions to $t > T+1$ hold by
+the same argument whenever Assumptions~\ref{ass:strat_a1}--\ref{ass:strat_a2}
+are satisfied at indices $t-T, \ldots, t$.
+
+%-----------------------------------------------------------------
+\subsection{Proof of Lemma~\ref{lem:bias_properties}}
+\label{app:proofs:lemma_bias}
+%-----------------------------------------------------------------
+
+Part~(i): If $\sigma_s = \sigma$ for all $s$, then
+$F_s(x) = G(x/\sigma)$ for every $s$, so
+$F_{\sstar}(x) = \bar{F}(x)$ pointwise and
+$\bsstar = \sup_x|F_{\sstar}(x) - \bar{F}(x)| = 0$.
+
+Part~(ii): By Definition~\ref{def:seasonal_bias},
+$\bsstar = \sup_x|G(x/\sigma_{\sstar}) - (1/\Sper)\sum_s G(x/\sigma_s)|$.
+Neither $G$, $\sigma_1,\ldots,\sigma_\Sper$, nor $\Sper$ depend on
+the sample size $T$.  Hence $\bsstar$ does not depend on $T$.
+\qed
+
+%-----------------------------------------------------------------
+\subsection{Proof of Proposition~\ref{prop:pooled_gap}}
+\label{app:proofs:prop_pooled}
+%-----------------------------------------------------------------
+
+We follow the proof of \citet[Theorem~1]{xu2023conformal}, modified
+to account for the heterogeneous seasonal distributions.
+
+\medskip
+\noindent\textit{Step 1 (p-value equivalence).}
+Define the stratified empirical $p$-value using the pooled residuals:
+\[
+  \hat{p}_{T+1}^{\text{pool}}
+  \;:=\;
+  \hat{F}_T^{\text{pool}}(\hat{\epsilon}_{T+1}),
+  \qquad
+  \hat{F}_T^{\text{pool}}(x)
+  = \frac{1}{T}\sum_{t=1}^T \Ind{\hat{\epsilon}_t \leq x}.
+\]
+The coverage event satisfies:
+\begin{equation}
+  \label{eq:pval_equiv}
+  Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\text{pool}}
+  \;\iff\;
+  \hat{\beta} \leq \hat{p}_{T+1}^{\text{pool}} \leq 1-\alpha+\hat{\beta}
+\end{equation}
+(cf.\ \citealt{xu2023conformal}, Sec.~3.1).  Thus:
+\begin{align}
+  \label{eq:gap_start}
+  &\bigl|\Prob(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\text{pool}} \mid X_{T+1}=x_{T+1}) - (1-\alpha)\bigr|
+  \notag\\
+  &= \bigl|\Prob(\hat{\beta} \leq \hat{F}_T^{\text{pool}}(\hat{\epsilon}_{T+1}) \leq 1-\alpha+\hat{\beta})
+     - \Prob(\beta \leq F_{\sstar}(\epsilon_{T+1}) \leq 1-\alpha+\beta)\bigr|,
+\end{align}
+where we used the Probability Integral Transform:
+$F_{\sstar}(\epsilon_{T+1}) \sim \mathrm{Unif}[0,1]$ since
+$\epsilon_{T+1} \sim F_{\sstar}$ (continuous), and thus
+$\Prob(\beta \leq F_{\sstar}(\epsilon_{T+1}) \leq 1-\alpha+\beta)
+= 1-\alpha$ for any $\beta \in [0,\alpha]$.
+
+\medskip
+\noindent\textit{Step 2 (three-step triangle decomposition).}
+Introduce two auxiliary CDFs:
+\begin{align}
+  \tilde{F}_T^{\text{pool}}(x)
+  &= \frac{1}{T}\sum_{t=1}^T \Ind{\epsilon_t \leq x}
+  \quad\text{(pooled empirical CDF of true errors)}, \notag\\
+  \bar{F}(x)
+  &= \frac{1}{\Sper}\sum_{s=1}^\Sper F_s(x)
+  \quad\text{(pooled mixture CDF, defined in~\eqref{eq:pooled_cdf})}. \notag
+\end{align}
+By the triangle inequality:
+\begin{equation}
+  \label{eq:three_step}
+  \bigl|\hat{F}_T^{\text{pool}}(x) - F_{\sstar}(x)\bigr|
+  \;\leq\;
+  \underbrace{\bigl|\hat{F}_T^{\text{pool}}(x) - \tilde{F}_T^{\text{pool}}(x)\bigr|}_{(A)}
+  +
+  \underbrace{\bigl|\tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)\bigr|}_{(B)}
+  +
+  \underbrace{\bigl|\bar{F}(x) - F_{\sstar}(x)\bigr|}_{(C)}.
+\end{equation}
+
+\medskip
+\noindent\textit{Step 3 (bounding term (A) via LOO coupling).}
+By Lemma~\ref{lem:coupling}, $\hat{\epsilon}_t = \epsilon_t +
+(f(x_t) - \hat{f}_{-t}^{\,\phi}(x_t))$.  Applying Lemma~2 of
+\citet{xu2023conformal} (whose proof does not require the errors to
+be identically distributed, only Assumption~\ref{ass:xu_a2}):
+\[
+  \sup_x\bigl|\hat{F}_T^{\text{pool}}(x) - \tilde{F}_T^{\text{pool}}(x)\bigr|
+  \;\leq\;
+  (L+1)\deltaT^{2/3} + 2\sup_x\bigl|\tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)\bigr|,
+\]
+where $L = \max_s L_s$.
+
+\medskip
+\noindent\textit{Step 4 (bounding term (B) via DKW).}
+Decompose $\tilde{F}_T^{\text{pool}} - \bar{F}$ by season:
+\[
+  \tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)
+  = \frac{1}{\Sper}\sum_{s=1}^\Sper
+    \bigl[\tilde{F}_{T_s,s}(x) - F_s(x)\bigr],
+\]
+where $\tilde{F}_{T_s,s}(x) = T_s^{-1}\sum_{t \in \calT_s}
+\Ind{\epsilon_t \leq x}$ is the within-season empirical CDF.
+Each within-season sequence $\{\epsilon_t : t \in \calT_s\}$
+is i.i.d.\ from $F_s$ (Assumption~\ref{ass:seasonal}), so
+the Dvoretzky--Kiefer--Wolfowitz (DKW) inequality
+\citep{massart1990tight} gives:
+\[
+  \Prob\!\Bigl(\sup_x\bigl|\tilde{F}_{T_s,s}(x)-F_s(x)\bigr| > u\Bigr)
+  \;\leq\; 2e^{-2T_s u^2}.
+\]
+Define the good event $A_T = \bigcap_{s=1}^\Sper
+\{\sup_x|\tilde{F}_{T_s,s}(x)-F_s(x)| \leq v_T\}$,
+where $v_T = \sqrt{W(16T_s)}/(2\sqrt{T_s}) \leq \sqrt{\log(16T_s)/T_s}$
+and $W(\cdot)$ is the Lambert $W$ function.  A union bound gives:
+\[
+  \Prob(A_T^c)
+  \;\leq\; \Sper \cdot v_T
+  \;\leq\; \Sper\sqrt{\log(16T_s)/T_s}.
+\]
+On the event $A_T$:
+\[
+  \sup_x\bigl|\tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)\bigr|
+  \;\leq\;
+  \max_s\sup_x\bigl|\tilde{F}_{T_s,s}(x)-F_s(x)\bigr|
+  \;\leq\; v_T
+  \;\leq\; \sqrt{\frac{\log(16T_s)}{T_s}}.
+\]
+
+\medskip
+\noindent\textit{Step 5 (term (C)).}
+By Definition~\ref{def:seasonal_bias}:
+$\sup_x|\bar{F}(x) - F_{\sstar}(x)| = \bsstar$.
+This term is independent of both $T$ and the realisation of the data.
+
+\medskip
+\noindent\textit{Step 6 (assembling the bound and identifying the bias term).}
+
+Ignoring estimation error for the moment (it contributes the $(L+1)(\deltaT^{2/3}+\deltaT)$ terms via the argument of \citealt[p.~31--33]{xu2023conformal}), the essential coverage computation is:
+\begin{align}
+  &\Prob\bigl(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\text{pool}}\bigr)
+  \;\approx\;
+  \Prob\bigl(Q_{\hat\beta}(\hat{\boldsymbol\epsilon}^{\text{pool}})
+             \leq \epsilon_{T+1} \leq
+             Q_{1-\alpha+\hat\beta}(\hat{\boldsymbol\epsilon}^{\text{pool}})\bigr)
+  \notag\\
+  &\approx\;
+  F_{\sstar}\!\bigl(\bar{F}^{-1}(1-\alpha+\hat\beta)\bigr)
+  - F_{\sstar}\!\bigl(\bar{F}^{-1}(\hat\beta)\bigr),
+  \label{eq:cov_approx}
+\end{align}
+where the second approximation uses the fact that
+$Q_p(\hat{\boldsymbol\epsilon}^{\text{pool}}) \approx \bar{F}^{-1}(p)$ as
+the pooled empirical CDF concentrates around $\bar{F}$.
+The coverage gap relative to $(1-\alpha)$ is:
+\begin{align*}
+  &F_{\sstar}\!\bigl(\bar{F}^{-1}(1-\alpha+\hat\beta)\bigr)
+   - F_{\sstar}\!\bigl(\bar{F}^{-1}(\hat\beta)\bigr)
+   - (1-\alpha) \\
+  &=\bigl[F_{\sstar}\!\bigl(\bar{F}^{-1}(1-\alpha+\hat\beta)\bigr)
+      - \bar{F}\!\bigl(\bar{F}^{-1}(1-\alpha+\hat\beta)\bigr)\bigr]
+   - \bigl[F_{\sstar}\!\bigl(\bar{F}^{-1}(\hat\beta)\bigr)
+      - \bar{F}\!\bigl(\bar{F}^{-1}(\hat\beta)\bigr)\bigr].
+\end{align*}
+Since $\bar{F}(\bar{F}^{-1}(u)) = u$ for any $u \in (0,1)$, each
+bracket has absolute value at most
+$\sup_x|F_{\sstar}(x) - \bar{F}(x)| = \bsstar$.
+By the triangle inequality, the absolute value of the entire
+expression is at most $\bsstar + \bsstar = 2\bsstar$.
+
+Incorporating the sampling and estimation error terms
+from Steps~3--5 (which follow \citealt[proof of Theorem~1]{xu2023conformal}
+with $T_s$ i.i.d.\ draws and Assumption~\ref{ass:xu_a2}) yields:
+\[
+  \bigl|\Prob(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\text{pool}} \mid X_{T+1}=x_{T+1}) - (1-\alpha)\bigr|
+  \;\leq\;
+  12\sqrt{\frac{\log(16\Ts)}{\Ts}}
+  + 4(L+1)(\deltaT^{2/3}+\deltaT)
+  + 2\bsstar,
+\]
+which is~\eqref{eq:pooled_gap}. The factor $2\bsstar$ is
+\emph{exact} in the sense that it arises from a difference of two
+CDF evaluations, each bounded by $\bsstar$.\qed
+
+%-----------------------------------------------------------------
+\subsection{Proof of Theorem~\ref{thm:strat_coverage}}
+\label{app:proofs:thm1s}
+%-----------------------------------------------------------------
+
+The proof applies the argument of
+\citet[Theorem~1]{xu2023conformal} to the stratified
+sub-sequence of length $\Ts$.
+
+\medskip
+\noindent\textit{Step 1 (stratified p-value equivalence).}
+Define the within-stratum empirical CDF of LOO residuals:
+\[
+  \hat{F}_{\Ts}^{(\sstar)}(x)
+  = \frac{1}{\Ts}\sum_{t \in \calT_{\sstar}} \Ind{\hat{\epsilon}_t \leq x}.
+\]
+The coverage event satisfies:
+\[
+  Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\text{strat}}
+  \;\iff\;
+  \hat{\beta}^{(\sstar)} \leq
+  \hat{F}_{\Ts}^{(\sstar)}(\hat{\epsilon}_{T+1})
+  \leq 1-\alpha+\hat{\beta}^{(\sstar)},
+\]
+which mirrors~\eqref{eq:pval_equiv} with the stratified buffer.
+Thus:
+\begin{align}
+  \label{eq:strat_gap_start}
+  &\bigl|\Prob(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\text{strat}} \mid X_{T+1}=x_{T+1}) - (1-\alpha)\bigr|
+  \notag\\
+  &= \bigl|\Prob(\hat{\beta}^{(\sstar)} \leq
+    \hat{F}_{\Ts}^{(\sstar)}(\hat{\epsilon}_{T+1})
+    \leq 1-\alpha+\hat{\beta}^{(\sstar)})
+     - \Prob(\beta \leq F_{\sstar}(\epsilon_{T+1}) \leq 1-\alpha+\beta)\bigr|.
+\end{align}
+The second probability equals $1-\alpha$ by the Probability
+Integral Transform applied to $\epsilon_{T+1} \sim F_{\sstar}$
+(Assumption~\ref{ass:strat_a1}).
+
+\medskip
+\noindent\textit{Step 2 (two-step triangle decomposition).}
+Introduce the within-stratum empirical CDF of true errors:
+$\tilde{F}_{\Ts}^{(\sstar)}(x)
+= \Ts^{-1}\sum_{t \in \calT_{\sstar}} \Ind{\epsilon_t \leq x}$.
+By the triangle inequality:
+\[
+  \bigl|\hat{F}_{\Ts}^{(\sstar)}(x) - F_{\sstar}(x)\bigr|
+  \;\leq\;
+  \underbrace{\bigl|\hat{F}_{\Ts}^{(\sstar)}(x) - \tilde{F}_{\Ts}^{(\sstar)}(x)\bigr|}_{(A')}
+  +
+  \underbrace{\bigl|\tilde{F}_{\Ts}^{(\sstar)}(x) - F_{\sstar}(x)\bigr|}_{(B')}.
+\]
+Note that the third term $(C)$ from the pooled proof is absent:
+the stratified empirical CDF compares directly with $F_{\sstar}$,
+not with $\bar{F}$.
+
+\medskip
+\noindent\textit{Step 3 (bounding term $(A')$ via LOO coupling).}
+The within-stratum LOO residuals $\hat{\epsilon}_t$ for
+$t \in \calT_{\sstar}$ satisfy the coupling~\eqref{eq:coupling}
+with the same pointwise estimation error.  Applying Lemma~2 of
+\citet{xu2023conformal} with the within-stratum quantities
+from Assumption~\ref{ass:strat_a2}:
+\[
+  \sup_x\bigl|\hat{F}_{\Ts}^{(\sstar)}(x) - \tilde{F}_{\Ts}^{(\sstar)}(x)\bigr|
+  \;\leq\;
+  (L_{\sstar}+1)\deltaTs^{2/3}
+  + 2\sup_x\bigl|\tilde{F}_{\Ts}^{(\sstar)}(x) - F_{\sstar}(x)\bigr|.
+\]
+
+\medskip
+\noindent\textit{Step 4 (bounding term $(B')$ via DKW).}
+The $\Ts$ within-stratum errors $\{\epsilon_t : t \in \calT_{\sstar}\}$
+are i.i.d.\ from $F_{\sstar}$ by Assumption~\ref{ass:strat_a1}.
+Applying the DKW inequality \citep{massart1990tight} directly:
+$\Prob(\sup_x|\tilde{F}_{\Ts}^{(\sstar)}(x)-F_{\sstar}(x)| > u)
+\leq 2e^{-2\Ts u^2}$.
+Choose $u = \sqrt{W(16\Ts)}/(2\sqrt{\Ts}) \leq \sqrt{\log(16\Ts)/\Ts}$.
+Define the event $A_T^{(\sstar)}$ on which
+$\sup_x|\tilde{F}_{\Ts}^{(\sstar)}(x)-F_{\sstar}(x)|
+\leq \sqrt{\log(16\Ts)/\Ts}$;
+this event satisfies
+$\Prob((A_T^{(\sstar)})^c) \leq \sqrt{\log(16\Ts)/\Ts}$.
+
+\medskip
+\noindent\textit{Step 5 (assembling the stratified bound).}
+Following the argument of \citet[pp.~31--33]{xu2023conformal},
+conditioning on $A_T^{(\sstar)}$ and using
+$F_{\sstar}(\epsilon_{T+1}) \sim \mathrm{Unif}[0,1]$:
+\[
+  \Prob\!\bigl(|F_{\sstar}(\epsilon_{T+1}) - \gamma|
+               \leq |\hat{F}_{\Ts}^{(\sstar)}(\hat{\epsilon}_{T+1})
+                    - F_{\sstar}(\epsilon_{T+1})|\bigr)
+  \;\leq\;
+  6\sqrt{\frac{\log(16\Ts)}{\Ts}}
+  + 2(L_{\sstar}+1)(\deltaTs^{2/3}+\deltaTs)
+\]
+for $\gamma \in \{\beta, 1-\alpha+\beta\}$.  Summing and
+using~\eqref{eq:strat_gap_start} yields~\eqref{eq:strat_bound}.\qed
+
+%-----------------------------------------------------------------
+\subsection{Auxiliary: Mixing of Sub-sampled Processes}
+\label{app:proofs:submixing}
+%-----------------------------------------------------------------
+
+\begin{proposition}[Strong mixing of season-$s$ sub-sequence]
+\label{prop:submixing}
+Let $\{\epsilon_t\}_{t \geq 1}$ be a strictly stationary and strongly
+mixing sequence with mixing coefficients $\{\alpha_n\}_{n \geq 0}$.
+For any $s \in \{1,\ldots,\Sper\}$, the sub-sequence
+$\{\epsilon_t : s(t) = s\}$ (observations at time indices
+$s, s+\Sper, s+2\Sper, \ldots$) is strictly stationary and strongly
+mixing with mixing coefficients bounded above by
+$\alpha_\Sper, \alpha_{2\Sper}, \ldots$
+\end{proposition}
+
+\begin{proof}
+Let $Z_k = \epsilon_{s + (k-1)\Sper}$ for $k = 1, 2, \ldots$ be
+the sub-sequence.  The sub-$\sigma$-algebra generated by
+$Z_1, \ldots, Z_k$ satisfies
+$\sigma(Z_1, \ldots, Z_k) = \sigma(\epsilon_s, \ldots, \epsilon_{s+(k-1)\Sper})
+\subseteq \sigma(\epsilon_1, \ldots, \epsilon_{s+(k-1)\Sper})$.
+Similarly, $\sigma(Z_{k+n}, Z_{k+n+1}, \ldots) \subseteq
+\sigma(\epsilon_{s+(k+n-1)\Sper}, \epsilon_{s+(k+n)\Sper}, \ldots)$.
+The mixing coefficient of $\{Z_k\}$ at lag $n$ is therefore
+bounded by the mixing coefficient of $\{\epsilon_t\}$ at lag
+$(k+n)\Sper - k\Sper = n\Sper$, i.e., by $\alpha_{n\Sper}$.
+Since $\alpha_{n\Sper} \leq \alpha_\Sper \to 0$ as $n \to \infty$
+(whenever $\Sper \geq 1$ and $\alpha_n \to 0$), the sub-sequence
+is strongly mixing.  Stationarity of $\{Z_k\}$ follows from
+stationarity of $\{\epsilon_t\}$.
+\end{proof}
+
+%-----------------------------------------------------------------
+\subsection{Proof of Theorem~\ref{thm:width_bound}}
+\label{app:proofs:thm2s}
+%-----------------------------------------------------------------
+
+The proof mirrors \citet[Theorem~3]{xu2023conformal},
+with all global quantities ($T$, $\deltaT$, $L$, etc.) replaced
+by their within-stratum counterparts
+($\Ts$, $\deltaTs$, $L_{\sstar}$, etc.).
+
+\medskip
+Define $\hat{F}_{\Ts}^{(\sstar),-1}$ as the interpolated inverse
+CDF of the within-stratum residuals, with Lipschitz constant
+$K'_{\sstar}$ as defined in Theorem~\ref{thm:width_bound}.
+The symmetric difference $\Delta_{\sstar}(T)$ between
+$\hat{C}_{T+1}^{\alpha,\text{strat}}$ and the oracle $C_{T+1}^\alpha$
+is decomposed into three parts:
+\begin{enumerate}
+  \item[(i)] $|\hat{F}_{\Ts}^{(\sstar),-1}(1-\alpha+\hat{\beta}_{\text{line}}^{(\sstar)})
+    - \hat{F}_{\Ts}^{(\sstar),-1}(1-\alpha+\hat{\beta}^{(\sstar)})|$
+    bounded via the Lipschitz constant $K'_{\sstar}$
+    and the grid spacing $\alpha/m$;
+  \item[(ii)] $|\hat{F}_{\Ts}^{(\sstar),-1}(\cdot) - F_{\sstar}^{-1}(\cdot)|$
+    bounded via Theorem~\ref{thm:strat_coverage};
+  \item[(iii)] $|F_{\sstar}^{-1}(1-\alpha+\hat{\beta}^{(\sstar)})
+    - F_{\sstar}^{-1}(1-\alpha+\beta^*)|$
+    bounded via the convergence $\hat{\beta}^{(\sstar)} \to \beta^*$
+    (which follows from part (ii) and the Lipschitz continuity
+    of $F_{\sstar}^{-1}$).
+\end{enumerate}
+Adding the pointwise estimation error $|\hat{f}_{-(T+1)}(x_{T+1})
+- f(x_{T+1})| \leq \deltaTs$ gives the overall bound
+\eqref{eq:width_bound}, with
+$M_{\sstar} = 2K_{\sstar}/|1/K'_{\sstar} - L_{\sstar}|$
+as defined in \citet[proof of Theorem~3]{xu2023conformal}.\qed

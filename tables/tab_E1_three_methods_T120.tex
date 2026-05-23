@@ -1,0 +1,27 @@
+\begin{table}[ht]
+\centering
+\caption{Per-season empirical coverage ($90\%$ nominal) for three methods.
+$T=120$, $\alpha=0.10$, $S=12$, $n_{\mathrm{rep}}=200$.}
+\label{tab:e1_three_methods_T120}
+\begin{tabular}{l ccc ccc}
+\toprule
+ & \multicolumn{3}{c}{Coverage} & \multicolumn{3}{c}{Width} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+Month & SARIMA & Pooled & EnbPI-S & SARIMA & Pooled & EnbPI-S \\
+\midrule
+Jan* & 0.745 & \textbf{0.765} & 0.706 & 8.14 & \textit{6.61} & 6.82 \\
+Feb* & 0.707 & \textbf{0.767} & 0.723 & 8.14 & \textit{6.57} & 6.93 \\
+Mar & 0.805 & \textbf{0.915} & 0.701 & 8.14 & 6.61 & \textit{3.94} \\
+Apr & 0.855 & \textbf{0.909} & 0.692 & 8.14 & 6.64 & \textit{3.93} \\
+May & 0.879 & \textbf{0.917} & 0.703 & 8.14 & 6.64 & \textit{4.00} \\
+Jun & \textbf{0.889} & 0.926 & 0.703 & 8.14 & 6.64 & \textit{3.88} \\
+Jul & \textbf{0.899} & 0.922 & 0.690 & 8.14 & 6.65 & \textit{3.81} \\
+Aug* & 0.722 & \textbf{0.755} & 0.710 & 8.14 & \textit{6.61} & 6.86 \\
+Sep* & 0.689 & \textbf{0.745} & 0.718 & 8.14 & \textit{6.57} & 7.02 \\
+Oct & 0.812 & \textbf{0.913} & 0.700 & 8.14 & 6.60 & \textit{4.08} \\
+Nov & 0.860 & \textbf{0.922} & 0.709 & 8.14 & 6.65 & \textit{3.95} \\
+Dec & \textbf{0.904} & 0.927 & 0.680 & 8.14 & 6.65 & \textit{3.78} \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Bold coverage = closest to $90\%$ nominal; italic width = narrowest.  * = high-volatility months ($\sigma_{\mathrm{high}}=2$).} \\
+\end{tabular}
+\end{table}

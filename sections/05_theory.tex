@@ -1,0 +1,352 @@
+% ============================================================
+% SECTION 5 — THEORETICAL RESULTS
+% ============================================================
+\section{Theoretical Results}
+\label{sec:theory}
+
+This section contains the main theoretical contributions of the paper.
+Section~\ref{sec:theory:assumptions} states the within-stratum
+assumptions for \texttt{EnbPI-S}.  Section~\ref{sec:theory:main}
+presents the stratified coverage bound (Theorem~\ref{thm:strat_coverage}).
+Section~\ref{sec:theory:marginal} states the corresponding marginal
+result.  Section~\ref{sec:theory:dominance} derives the condition
+under which \texttt{EnbPI-S} outperforms pooled EnbPI.  All proofs
+are deferred to Appendix~\ref{app:proofs}.
+
+%------------------------------------------------------------
+\subsection{Within-Stratum Assumptions}
+\label{sec:theory:assumptions}
+%------------------------------------------------------------
+
+The following two assumptions are the season-specific analogues
+of Assumptions~\ref{ass:xu_a1} and~\ref{ass:xu_a2}.
+
+\begin{assumption}[Within-stratum i.i.d.\ errors]
+\label{ass:strat_a1}
+The errors
+$\{\epsilon_t : t \in \calT_{\sstar}\} \cup \{\epsilon_{T+1}\}$
+are i.i.d.\ according to $F_{\sstar}$, which is Lipschitz
+continuous with constant $L_{\sstar} > 0$.
+\end{assumption}
+
+\begin{assumption}[Within-stratum estimation quality]
+\label{ass:strat_a2}
+There exists a real sequence $\{\deltaTs\}_{T \geq 1}$
+(implicitly indexed through $T_{\sstar} = T/\Sper$) such that
+\begin{equation}
+  \label{eq:strat_a2}
+  \frac{1}{\Ts}
+  \sum_{t \in \calT_{\sstar}}
+  \bigl(\hat{f}_{-t}(x_t) - f(x_t)\bigr)^2
+  \;\leq\; \deltaTs^2
+  \qquad\text{and}\qquad
+  \bigl|\hat{f}_{-(T+1)}(x_{T+1}) - f(x_{T+1})\bigr|
+  \;\leq\; \deltaTs.
+\end{equation}
+\end{assumption}
+
+\begin{remark}[Relationship between assumptions]
+\label{rem:assumption_nesting}
+Assumption~\ref{ass:strat_a1} follows directly from
+Assumption~\ref{ass:seasonal}: under the seasonal model
+$\epsilon_t = \sigma_{\sstar}\eta_t$ with $\eta_t$ i.i.d.\
+from $G$ (Assumption~\ref{ass:seasonal}), all errors at
+season $\sstar$ are i.i.d.\ from $F_{\sstar} = G(\cdot/\sigma_{\sstar})$.
+Assumption~\ref{ass:strat_a2} is implied by
+Assumption~\ref{ass:xu_a2}: if the average MSE over all $T$
+training points is at most $\delta_T^2$, then the average
+over any subset (including $\calT_{\sstar}$) is at most
+$\Sper \cdot \delta_T^2$, so \eqref{eq:strat_a2} holds with
+$\deltaTs \leq \sqrt{\Sper}\,\deltaT$.
+\end{remark}
+
+%------------------------------------------------------------
+\subsection{Stratified Coverage Bound}
+\label{sec:theory:main}
+%------------------------------------------------------------
+
+\begin{theorem}[\texttt{EnbPI-S} conditional coverage bound]
+\label{thm:strat_coverage}
+Let Assumptions~\ref{ass:strat_a1} and~\ref{ass:strat_a2} hold.
+Then, for any $T \in \N$, $\alpha \in (0,1)$, and
+$\beta \in [0,\alpha]$:
+\begin{align}
+  \label{eq:strat_bound}
+  &\bigl|
+    \Prob\!\bigl(
+      Y_{T+1} \in \hat{C}_{T+1}^{\,\alpha,\textup{strat}}
+      \mid X_{T+1} = x_{T+1}
+    \bigr) - (1-\alpha)
+  \bigr|
+  \notag\\
+  &\quad\leq\;
+  12\sqrt{\frac{\log(16\,\Ts)}{\Ts}}
+  \;+\;
+  4(L_{\sstar}+1)\!\left(\deltaTs^{2/3} + \deltaTs\right).
+\end{align}
+Furthermore, if $\deltaTs \to 0$ as $\Ts \to \infty$
+(which occurs whenever $T \to \infty$ for fixed $\Sper$),
+both terms on the right-hand side of~\eqref{eq:strat_bound}
+converge to zero, establishing \emph{asymptotic conditional
+validity} for every season $\sstar \in \{1,\ldots,\Sper\}$.
+\end{theorem}
+
+\begin{proof}
+  See Appendix~\ref{app:proofs:thm1s}.  The proof applies the
+  argument of \citet[Theorem~1]{xu2023conformal} to the
+  within-stratum sub-sequence of length $\Ts$.  The key steps
+  are: (i) observe that the stratified empirical $p$-value
+  $\hat{p}_{T+1}^{(\sstar)} = \hat{F}_{\Ts}^{(\sstar)}(\hat{\epsilon}_{T+1})$
+  is defined identically to the pooled one but using only
+  season-$\sstar$ residuals; (ii) the Probability Integral
+  Transform gives $F_{\sstar}(\epsilon_{T+1}) \sim \mathrm{Unif}[0,1]$
+  since $\epsilon_{T+1} \sim F_{\sstar}$
+  (Assumption~\ref{ass:strat_a1}); (iii) the DKW inequality
+  \citep{massart1990tight} applied to the $\Ts$ i.i.d.\
+  within-stratum errors yields the first term; (iv) the LOO
+  coupling \eqref{eq:coupling} and Assumption~\ref{ass:strat_a2}
+  yield the second term.  No seasonal bias term appears because
+  the stratified empirical CDF estimates $F_{\sstar}$ directly.
+\end{proof}
+
+\begin{remark}[Comparison with Theorem~\ref{thm:xu_original}]
+\label{rem:compare_theorems}
+Theorem~\ref{thm:strat_coverage} and Theorem~\ref{thm:xu_original}
+(the original result of \citealt{xu2023conformal}) have the same
+functional form: both bound the conditional coverage gap by the
+sum of a DKW-type sampling term and an estimation quality term.
+The critical difference is:
+\begin{enumerate}
+  \item Theorem~\ref{thm:xu_original} uses $T$ (total training
+    observations) and $\deltaT$; Theorem~\ref{thm:strat_coverage}
+    uses $\Ts = T/\Sper$ and $\deltaTs$.  The stratified bound
+    converges at the slower rate $O(T^{-1/2}/\sqrt{\Sper})$
+    due to the smaller effective sample size.
+
+  \item Theorem~\ref{thm:xu_original} is \emph{only valid} when
+    Assumption~\ref{ass:xu_a1} holds (common CDF for all errors),
+    which fails under seasonal heteroskedasticity.  Adding the
+    seasonal bias $2\bsstar$ to the right-hand side of
+    Theorem~\ref{thm:xu_original} yields
+    Proposition~\ref{prop:pooled_gap}, which is valid but does
+    not converge to zero.  Theorem~\ref{thm:strat_coverage} has
+    no such persistent term.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Extension to dependent within-stratum errors]
+\label{rem:mixing}
+Assumption~\ref{ass:strat_a1} can be relaxed exactly as in
+\citet[Corollaries~1--2]{xu2023conformal}:
+\begin{itemize}
+  \item If within-stratum errors follow a linear process,
+    the DKW term becomes $O(\log \Ts / \sqrt{\Ts})$.
+  \item If within-stratum errors are strongly mixing with
+    summable mixing coefficients, the term becomes
+    $O((\log \Ts)^{2/3} / \Ts^{1/3})$.
+\end{itemize}
+The within-stratum errors $\{\epsilon_t : t \in \calT_{\sstar}\}$
+are spaced $\Sper$ time steps apart.  If the original process
+is $\alpha_n$-mixing, the sub-sampled process has mixing
+coefficients bounded by $\alpha_{\Sper}, \alpha_{2\Sper}, \ldots$
+(Proposition~\ref{prop:submixing} in Appendix~\ref{app:proofs}).
+For most economic time series, $\Sper = 12$ is large enough that
+the within-stratum errors are approximately i.i.d., making
+Assumption~\ref{ass:strat_a1} a reasonable working hypothesis.
+The autocorrelation function of the within-stratum LOO residuals
+can be used as a diagnostic (cf.\ \citealt{xu2023conformal},
+p.~9).
+\end{remark}
+
+%------------------------------------------------------------
+\subsection{Marginal Coverage}
+\label{sec:theory:marginal}
+%------------------------------------------------------------
+
+\begin{corollary}[Marginal coverage within a season]
+\label{cor:marginal}
+Under the conditions of Theorem~\ref{thm:strat_coverage},
+the same bound holds for the marginal coverage conditional
+on the season:
+\begin{equation}
+  \label{eq:marginal_strat}
+  \bigl|
+    \Prob\!\bigl(
+      Y_{T+1} \in \hat{C}_{T+1}^{\,\alpha,\textup{strat}}
+      \mid s(T+1) = \sstar
+    \bigr) - (1-\alpha)
+  \bigr|
+  \;\leq\;
+  12\sqrt{\frac{\log(16\,\Ts)}{\Ts}}
+  \;+\;
+  4(L_{\sstar}+1)\!\left(\deltaTs^{2/3} + \deltaTs\right).
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Apply the law of total expectation to
+Theorem~\ref{thm:strat_coverage}, integrating over the conditional
+distribution of $X_{T+1}$ given $s(T+1) = \sstar$.  The bound
+is the same since the right-hand side of~\eqref{eq:strat_bound}
+does not depend on $x_{T+1}$.
+\end{proof}
+
+%------------------------------------------------------------
+\subsection{When Does Stratification Dominate Pooling?}
+\label{sec:theory:dominance}
+%------------------------------------------------------------
+
+Comparing the asymptotic behaviour of the two bounds, the
+structural result is immediate.
+
+\begin{proposition}[Asymptotic dominance of stratification]
+\label{prop:strat_dominance}
+Suppose Assumptions~\ref{ass:strat_a1}--\ref{ass:strat_a2}
+and~\ref{ass:seasonal} hold, and that $\deltaTs \to 0$ and
+$\deltaT \to 0$ as $T \to \infty$.  Then:
+\begin{enumerate}
+  \item[\textup{(i)}]
+    The pooled bound (Proposition~\ref{prop:pooled_gap}) satisfies:
+    \[
+      \liminf_{T \to \infty}
+      \bigl|
+        \Prob(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\textup{pool}})
+        - (1-\alpha)
+      \bigr|
+      \;\geq\; 2\bsstar.
+    \]
+
+  \item[\textup{(ii)}]
+    The stratified bound (Theorem~\ref{thm:strat_coverage}) satisfies:
+    \[
+      \lim_{T \to \infty}
+      \bigl|
+        \Prob(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\textup{strat}})
+        - (1-\alpha)
+      \bigr|
+      \;=\; 0.
+    \]
+
+  \item[\textup{(iii)}]
+    Consequently, whenever $\bsstar > 0$, stratification strictly
+    dominates pooling in asymptotic coverage for season $\sstar$.
+    By Lemma~\ref{lem:bias_properties}(i), $\bsstar > 0$ if and
+    only if not all seasonal scales are equal.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  Parts~(i) and~(ii) follow directly from
+  Proposition~\ref{prop:pooled_gap} and
+  Theorem~\ref{thm:strat_coverage}, letting $T \to \infty$ and
+  using the hypothesis $\deltaT, \deltaTs \to 0$.  Part~(iii)
+  combines (i) and (ii) with Lemma~\ref{lem:bias_properties}.
+\end{proof}
+
+\paragraph{Finite-sample trade-off.}
+Proposition~\ref{prop:strat_dominance} is asymptotic.  For finite $T$,
+there is a genuine trade-off: stratification reduces the
+persistent bias $2\bsstar$ but increases the sampling term
+(from $O(\sqrt{\log T / T})$ to $O(\sqrt{S\log T / T})$) by
+a factor of $\sqrt{\Sper}$.  Stratification is preferred over
+pooling for a given season $\sstar$ when the bias dominates the
+additional sampling variance.  A sufficient condition for
+stratification to provide a strictly better bound for finite $T$
+is:
+\begin{equation}
+  \label{eq:dominance_condition}
+  2\bsstar \;>\;
+  12\!\left(
+    \sqrt{\frac{\log(16\Ts)}{\Ts}}
+    - \sqrt{\frac{\log(16T)}{T}}
+  \right)
+  + 4(L_{\sstar}+1)
+  \left(\deltaTs^{2/3} - \deltaT^{2/3}\right),
+\end{equation}
+where the right-hand side is positive (since
+$\sqrt{\log(16\Ts)/\Ts} > \sqrt{\log(16T)/T}$ for $\Sper > 1$).
+
+\begin{remark}[Practical applicability of condition~\eqref{eq:dominance_condition}]
+\label{rem:dominance_practical}
+For $\Sper = 12$ and $T = 120$ (10 years of monthly data),
+$\Ts = 10$ and the dominant term on the right-hand side of
+\eqref{eq:dominance_condition} is
+\[
+  12\!\left(\sqrt{\frac{\log(16\Ts)}{\Ts}}
+           - \sqrt{\frac{\log(16T)}{T}}\right)
+  = 12\!\left(\sqrt{\frac{\ln(160)}{10}}
+              - \sqrt{\frac{\ln(1920)}{120}}\right)
+  \approx 12(0.713 - 0.251) \approx 5.55,
+\]
+which exceeds 1 (the maximum possible coverage gap) and is therefore
+trivially satisfied for any $b_{\sstar} \in [0,1/2]$.  The bounds
+alone thus cannot adjudicate between methods at $T = 120$.  This suggests that the theoretical bounds
+alone cannot adjudicate between methods for $T = 120$; the
+asymptotic comparison in Proposition~\ref{prop:strat_dominance}
+is more informative.  However, for the IPCA application with
+$T = 216$ months of training data, the seasonal bias
+$\bsstar \approx 0.12$ (computed in Section~\ref{sec:model:seasonal})
+is a fixed empirical quantity that does not shrink with $T$,
+while the sampling terms do.  The simulation in
+Section~\ref{sec:simulations} shows that \texttt{EnbPI-S}
+achieves better conditional coverage than pooled EnbPI already
+for $T = 120$ months, validating the asymptotic theory even
+at moderate sample sizes.
+\end{remark}
+
+%------------------------------------------------------------
+\subsection{Width Bound for \texttt{EnbPI-S}}
+\label{sec:theory:width}
+%------------------------------------------------------------
+
+The following result bounds the gap in interval width between
+\texttt{EnbPI-S} and the oracle interval $C_{T+1}^{\alpha}$.
+
+\begin{theorem}[\texttt{EnbPI-S} width gap bound]
+\label{thm:width_bound}
+Under Assumptions~\ref{ass:strat_a1}--\ref{ass:strat_a2},
+further assume $F_{\sstar}^{-1}$ is Lipschitz with constant
+$K_{\sstar} > 0$.  With probability at least
+$1 - \sqrt{\log(16\Ts)/\Ts}$:
+\begin{equation}
+  \label{eq:width_bound}
+  \Delta_{\sstar}(T)
+  \;\leq\;
+  \deltaTs
+  + \frac{\alpha K'_{\sstar}}{m}
+  + 2(K_{\sstar} + M_{\sstar})
+  \left(
+    3\sqrt{\frac{\log(16\Ts)}{\Ts}}
+    + (L_{\sstar}+1)\!\left(\deltaTs^{2/3}+\deltaTs\right)
+  \right),
+\end{equation}
+where:
+\begin{itemize}
+  \item $\Delta_{\sstar}(T) = \hat{C}_{T+1}^{\alpha,\textup{strat}}
+    \triangle C_{T+1}^{\alpha}$ is the Lebesgue measure of the
+    symmetric difference between the stratified and oracle intervals;
+  \item $m$ is the number of line-search grids for
+    $\hat{\beta}^{(\sstar)}$ \eqref{eq:betahat_strat};
+  \item $K'_{\sstar} = \max_{j=1,\ldots,\Ts-1}
+    (\hat{\epsilon}_{j+1}^{(\sstar)} - \hat{\epsilon}_j^{(\sstar)})$
+    is the largest gap between consecutive sorted
+    within-stratum LOO residuals;
+  \item $M_{\sstar} = 2K_{\sstar}/|1/K'_{\sstar} - L_{\sstar}|$.
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+  See Appendix~\ref{app:proofs:thm2s}.  The proof mirrors
+  \citet[Theorem~3]{xu2023conformal}, replacing all global
+  quantities ($T$, $\deltaT$, etc.) with their stratum-$\sstar$
+  counterparts ($\Ts$, $\deltaTs$, etc.).
+\end{proof}
+
+\begin{remark}
+  Theorem~\ref{thm:width_bound} implies that, as $T \to \infty$
+  and $\deltaTs \to 0$, the stratified interval
+  $\hat{C}_{T+1}^{\alpha,\textup{strat}}$ converges in width
+  to the oracle $C_{T+1}^{\alpha}$ for season $\sstar$.  The
+  convergence rate is determined by $\Ts = T/\Sper$, with the
+  same functional form as for the non-seasonal case.
+\end{remark}

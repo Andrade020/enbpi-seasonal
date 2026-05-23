@@ -1,0 +1,83 @@
+% ============================================================
+% ABSTRACT
+% ============================================================
+We study the coverage properties of the Ensemble batch
+Prediction Intervals (EnbPI) algorithm of \citet{xu2023conformal}
+under seasonal heteroskedasticity --- the empirically common
+setting in which the variance of forecast errors varies
+systematically by calendar season.  We show that pooled
+calibration introduces a persistent, season-dependent bias
+of magnitude $2b_{s^*}$ in the per-season coverage gap,
+where $b_{s^*}$ measures the discrepancy between the
+season-specific residual CDF and the pooled mixture CDF.
+This bias does not vanish as the training sample grows,
+causing systematic undercoverage in high-volatility seasons
+and overcoverage in low-volatility seasons.
+
+To correct for this bias, we propose \texttt{EnbPI-S}, a
+stratified extension of EnbPI that maintains $S$ separate
+calibration buffers --- one per calendar season --- while
+keeping the bootstrap training phase and sliding-window
+update of the original algorithm unchanged.  We prove that
+the per-season coverage gap of \texttt{EnbPI-S} converges
+to zero at rate $O(\sqrt{\log T_s / T_s})$, where
+$T_s = T/S$ is the per-stratum sample size, and derive
+a finite-sample dominance condition that identifies when
+stratification yields tighter intervals than pooling.
+
+Simulation experiments compare three methods ---
+SARIMA-Gaussian, Pooled EnbPI, and \texttt{EnbPI-S} ---
+revealing a progressive improvement.
+SARIMA-Gaussian suffers from two compounding failures
+(Gaussian tails and pooled variance), achieving only $66\%$
+coverage in September at the $90\%$ nominal level.
+Pooled EnbPI corrects the distributional assumption via
+empirical quantiles, raising high-volatility coverage to $79\%$.
+\texttt{EnbPI-S} further corrects the seasonal calibration
+bias: high-volatility coverage rises to $84\%$, and the
+cross-season coverage spread collapses from $0.24$ (SARIMA)
+to $0.02$ --- a twelve-fold reduction.
+An application to monthly Brazilian consumer inflation
+(IPCA, 1995--2024) illustrates that \texttt{EnbPI-S}
+correctly assigns wider intervals to high-uncertainty
+months and narrower intervals to predictable months,
+while the pooled method applies a uniform bandwidth.
+A second application to Brazilian monthly export growth
+($T_s = 35$) confirms the method in the adequate-sample
+regime: both methods achieve coverage within $3.3$
+percentage points of nominal, and \texttt{EnbPI-S}
+produces a factor-of-$2.3$ width variation across seasons,
+with the widest interval in February (soybean harvest-onset)
+and the narrowest in July.
+
+\bigskip
+
+\noindent\textbf{Resumo:}
+Estudamos as propriedades de cobertura do algoritmo
+EnbPI \citep{xu2023conformal} sob heteroscedasticidade
+sazonal --- o cenário em que a variância dos erros de previsão
+varia sistematicamente por estação do calendário.
+Mostramos que a calibração conjunta (pooled) introduz um
+viés persistente de magnitude $2b_{s^*}$ na cobertura
+por estação.  Para corrigir esse viés, propomos o
+\texttt{EnbPI-S}, uma extensão estratificada do EnbPI
+que mantém $S$ buffers de calibração separados --- um
+por mês do calendário --- preservando integralmente a
+fase de treinamento por bootstrap e a atualização em
+janela deslizante do algoritmo original.
+Provamos que a lacuna de cobertura por estação de
+\texttt{EnbPI-S} converge a zero na taxa
+$O(\sqrt{\log T_s / T_s})$ e derivamos uma condição
+de dominância de amostra finita.
+Experimentos de Monte Carlo com três métodos
+(SARIMA-Gaussiano, EnbPI agrupado e \texttt{EnbPI-S})
+revelam melhora progressiva: o SARIMA cobre apenas $66\%$
+no pior mês; o EnbPI agrupado eleva isso para $79\%$;
+o \texttt{EnbPI-S} chega a $84\%$ e reduz a dispersão
+de cobertura entre estações em doze vezes.
+Uma aplicação ao componente de Alimentação no domicílio do
+IPCA (BCB série 1635, 1995--2024) ilustra que
+\texttt{EnbPI-S} produz intervalos mais largos nos meses
+de ajuste de safra (maio--junho) e mais estreitos nos
+meses estáveis (fevereiro, outubro), enquanto o método
+conjunto aplica uma largura uniforme ao longo do ano.

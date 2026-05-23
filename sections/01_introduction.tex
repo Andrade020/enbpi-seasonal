@@ -1,0 +1,150 @@
+% ============================================================
+% SECTION 1 — INTRODUCTION
+% ============================================================
+\section{Introduction}
+\label{sec:introduction}
+
+Reliable prediction intervals are indispensable whenever
+point forecasts are deployed in high-stakes settings: monetary
+policy decisions hinge on the uncertainty around inflation
+projections; energy-market participants require interval estimates
+that correctly reflect demand volatility in winter versus summer;
+supply-chain planners need intervals that are not systematically
+too narrow in peak months.  In all these settings the key
+feature is \emph{seasonal heteroskedasticity}: the variability
+of forecast errors differs systematically by calendar month
+or quarter.
+
+The conformal-prediction literature has made substantial progress
+in constructing prediction intervals for time series
+\citep{xu2023conformal, xu2023sequential, barber2023conformal},
+but the problem of \emph{seasonal} heteroskedasticity has
+received comparatively little attention.  The standard
+approach --- which we call \emph{pooled calibration} ---
+calibrates intervals on a single buffer of residuals drawn
+from all seasons indiscriminately.  When the distribution of
+forecast errors varies by season, pooled calibration introduces
+a persistent, season-dependent bias: intervals are too narrow
+(undercoverage) in volatile seasons and too wide (overcoverage)
+in stable seasons, regardless of how large the training set is.
+
+\paragraph{Contribution.}
+This paper makes three contributions.
+
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Formalisation of the seasonal bias.}
+  We derive an explicit upper bound for the per-season
+  coverage gap of the pooled EnbPI algorithm
+  \citep{xu2023conformal}.  The bound separates into a
+  vanishing sampling term and a non-vanishing bias term
+  $2b_{s^*}$, where $b_{s^*} = \sup_x |F_{s^*}(x) - \bar{F}(x)|$
+  measures the CDF discrepancy between season $s^*$ and the
+  pooled residual distribution
+  (Proposition~\ref{prop:pooled_gap}).
+
+\item \emph{The \texttt{EnbPI-S} algorithm.}
+  We introduce \texttt{EnbPI-S} (Algorithm~\ref{alg:enbpis}),
+  a stratified extension of EnbPI that maintains $\Sper$ separate
+  calibration buffers --- one per calendar season.  The only
+  departure from EnbPI is in the calibration step: the line
+  search for the optimal asymmetric quantile pair uses only
+  residuals from the same season as the prediction target.
+  The training phase is unchanged; no data splitting is required;
+  and the total memory footprint is identical to EnbPI.
+
+\item \emph{Theoretical guarantees.}
+  We prove that the per-season coverage gap of \texttt{EnbPI-S}
+  converges to zero at rate $O(\sqrt{\log T_s / T_s})$, where
+  $T_s = T/\Sper$ is the per-stratum training size
+  (Theorem~\ref{thm:strat_coverage}).
+  We also derive the dominance condition
+  (Proposition~\ref{prop:strat_dominance})
+  under which \texttt{EnbPI-S} has a strictly tighter bound
+  than pooled EnbPI, and a closed-form bound on the width
+  reduction achievable by stratification
+  (Theorem~\ref{thm:width_bound}).
+\end{enumerate}
+
+\paragraph{Empirical illustration.}
+We present two empirical applications, both using the
+test period January 2015 -- December 2024.
+In the first (food-at-home IPCA, BCB series 1635,
+$T_s = 20$), \texttt{EnbPI-S} demonstrates clear
+width adaptation (width ratio $1.78\times$ between
+most and least uncertain months) consistent with
+the data-limited predictions of Experiment E2.
+In the second (Brazilian export growth, BCB series 1402,
+$T_s = 35$), the method achieves coverage equidistant
+from the nominal for both methods ($3.3$ percentage
+points each), and the width ratio rises to $2.3\times$:
+\texttt{EnbPI-S} assigns a $13.8\%$ interval to February
+(harvest-onset, highest forecast risk) and a $6.0\%$
+interval to July (mid-year, lowest forecast risk), while
+the pooled method applies a constant $10.2\%$ throughout.
+
+\paragraph{Relation to the literature.}
+Conformal prediction for time series has been developed along
+several orthogonal dimensions.  \citet{xu2023conformal}
+introduced EnbPI, which handles non-exchangeability via a
+LOO bootstrap ensemble and a sliding window update.
+\citet{xu2023sequential} extended it to exploit residual
+autocorrelation (SPCI), improving efficiency under serial
+dependence.  \citet{barber2023conformal} established coverage
+guarantees for non-exchangeable data through a weighted
+conformal framework.
+
+On the conditional validity side, Mondrian conformal
+prediction \citep{vovk2005mondrian} achieves
+category-conditional coverage for i.i.d.\ data by stratifying
+the calibration set.  \citet{dewolf2023conditional} show that
+normalised conformal prediction achieves conditional validity
+for i.i.d.\ data from a location-scale family without
+stratification.
+
+\texttt{EnbPI-S} bridges these streams: it applies
+Mondrian-style stratification to the non-exchangeable,
+temporally dependent setting of EnbPI, providing
+asymptotically valid season-conditional intervals without
+requiring i.i.d.\ data, data splitting, or parametric
+distributional assumptions.  Our approach is complementary
+to SPCI: SPCI corrects for residual autocorrelation;
+\texttt{EnbPI-S} corrects for seasonal heteroskedasticity.
+The two can in principle be combined
+(Section~\ref{sec:conclusion}).
+
+The simulation study also benchmarks \texttt{EnbPI-S} against
+SARIMA$(1,0,0)(1,0,0)_{12}$ with Gaussian prediction intervals,
+the standard parametric alternative.
+SARIMA is correctly specified for the seasonal mean of our DGP,
+so its failure --- September coverage of $66.2\%$ against
+the $90\%$ nominal --- is attributable entirely to two
+compounding distributional misspecifications:
+Gaussian tails (underestimating the heavy $t_3$ innovations)
+and a single pooled $\hat{\sigma}$ (ignoring seasonal variance
+heterogeneity).
+Pooled EnbPI corrects the first failure through empirical
+quantiles ($+8.7$ pp on high-volatility coverage);
+\texttt{EnbPI-S} corrects both ($+5.6$ pp further),
+reducing the cross-season coverage spread twelve-fold
+relative to SARIMA ($0.019$ vs $0.243$).
+
+\paragraph{Organisation.}
+Section~\ref{sec:model} introduces the model and background.
+Section~\ref{sec:pooled_gap} analyses the coverage gap of
+pooled EnbPI.
+Section~\ref{sec:algorithm} presents the \texttt{EnbPI-S}
+algorithm and its properties.
+Section~\ref{sec:theory} states the main theoretical results.
+Section~\ref{sec:simulations} reports the simulation study.
+Section~\ref{sec:empirical} presents the IPCA application.
+Section~\ref{sec:conclusion} concludes.
+All proofs are in Appendix~\ref{app:proofs}.
+
+\paragraph{Notation.}
+We use $\Sper$ for the number of seasons, $T$ for the training
+size, $T_s = T/\Sper$ for the per-stratum size,
+$\alpha \in (0,1)$ for the miscoverage level, and $s(t)$ for
+the season of time $t$.  Empirical quantiles are denoted
+$Q_p(\hat{\boldsymbol\epsilon})$ for the $p$-th quantile
+of the multiset $\hat{\boldsymbol\epsilon}$.
+All other notation is defined where introduced.

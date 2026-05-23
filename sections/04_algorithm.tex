@@ -1,0 +1,258 @@
+% ============================================================
+% SECTION 4 — THE EnbPI-S ALGORITHM
+% ============================================================
+\section{The Stratified \texttt{EnbPI-S} Algorithm}
+\label{sec:algorithm}
+
+We now introduce \texttt{EnbPI-S}, the stratified version of EnbPI
+that eliminates the seasonal bias identified in
+Proposition~\ref{prop:pooled_gap}.  The key modification is surgical:
+the single calibration buffer of EnbPI is replaced by $\Sper$
+parallel buffers, one per season, so that each interval is calibrated
+exclusively on residuals drawn from the same seasonal distribution as
+the prediction target.
+
+%------------------------------------------------------------
+\subsection{Algorithm Description}
+\label{sec:algorithm:description}
+%------------------------------------------------------------
+
+\texttt{EnbPI-S} inherits the training phase of
+Algorithm~1 in \citet{xu2023conformal} without change.
+All $B$ bootstrap models are fitted once on the full training set,
+and all $T$ LOO residuals are computed as in
+Section~\ref{sec:model:enbpi}.  The only modification
+concerns how residuals are stored and used during prediction.
+
+\paragraph{Stratified buffer initialisation.}
+At the end of the training phase, instead of collecting all $T$
+LOO residuals into a single ordered multiset
+$\hat{\boldsymbol\epsilon}$, we assign each residual to its
+season-specific buffer:
+\[
+  \hat{\boldsymbol\epsilon}^{(s)}
+  \;=\;
+  \bigl\{\hat{\epsilon}_t : t \in \calT_s\bigr\},
+  \qquad s = 1, \ldots, \Sper,
+\]
+where $\calT_s = \{t \in [T]: s(t) = s\}$ is the stratum of
+season $s$ (Definition~\ref{def:season}).
+Each buffer $\hat{\boldsymbol\epsilon}^{(s)}$ has cardinality
+$T_s = |\calT_s|$.
+
+\paragraph{Prediction.}
+At test time $t > T$ with season $\sstar = s(t)$, the point
+forecast is computed identically to EnbPI:
+\[
+  \hat{f}_{-t}^{\,\phi}(x_t)
+  \;=\;
+  \phi\!\bigl(\hat{f}_{-i}^{\,\phi}(x_t) : i = 1,\ldots,T\bigr).
+\]
+The line search for the optimal lower quantile level now uses
+only the season-$\sstar$ buffer:
+\begin{equation}
+  \label{eq:betahat_strat}
+  \hat{\beta}^{(\sstar)}
+  \;=\;
+  \operatorname*{arg\,min}_{\beta \in [0,\,\alpha]}
+  \Bigl[
+    \Quant{1-\alpha+\beta}{\hat{\boldsymbol\epsilon}^{(\sstar)}}
+    -
+    \Quant{\beta}{\hat{\boldsymbol\epsilon}^{(\sstar)}}
+  \Bigr].
+\end{equation}
+The stratified prediction interval is then:
+\begin{equation}
+  \label{eq:enbpis_interval}
+  \hat{C}_t^{\,\alpha,\textup{strat}}
+  \;=\;
+  \Bigl[
+    \hat{f}_{-t}^{\,\phi}(x_t)
+    + \Quant{\hat{\beta}^{(\sstar)}}{\hat{\boldsymbol\epsilon}^{(\sstar)}},\;
+    \hat{f}_{-t}^{\,\phi}(x_t)
+    + \Quant{1-\alpha+\hat{\beta}^{(\sstar)}}{\hat{\boldsymbol\epsilon}^{(\sstar)}}
+  \Bigr].
+\end{equation}
+
+\paragraph{Sliding window update.}
+Every $s \geq 1$ steps, once observations $\{y_j\}_{j=t-s}^{t-1}$
+become available, only the buffer corresponding to their season
+is updated.  For each revealed observation $y_j$ at season
+$s_j = s(j)$:
+\begin{equation}
+  \label{eq:slide_strat}
+  \hat{\boldsymbol\epsilon}^{(s_j)}
+  \;\leftarrow\;
+  \Bigl(
+    \hat{\boldsymbol\epsilon}^{(s_j)}
+    \setminus
+    \{\hat{\epsilon}_{\text{oldest}}^{(s_j)}\}
+  \Bigr)
+  \cup
+  \{\hat{\epsilon}_j\},
+  \qquad
+  \hat{\epsilon}_j = y_j - \hat{f}_{-j}^{\,\phi}(x_j).
+\end{equation}
+Buffers for other seasons are untouched.  After the update,
+each buffer maintains its original size $T_{s_j}$, so the
+effective calibration history for each season grows at rate
+$1/\Sper$ relative to the passage of time.
+
+The complete algorithm is given in Algorithm~\ref{alg:enbpis}.
+
+%------------------------------------------------------------
+\begin{algorithm}[t]
+\caption{Ensemble Batch Prediction Intervals, Stratified
+         (\texttt{EnbPI-S})}
+\label{alg:enbpis}
+\DontPrintSemicolon
+\SetKwInOut{Require}{Require}
+\SetKwInOut{Ensure}{Ensure}
+\SetKwComment{Comment}{$\triangleright$\ }{}
+
+\Require{Training data $\{(x_i, y_i)\}_{i=1}^T$; prediction
+  algorithm $\calA$; significance level $\alpha$; aggregation
+  function $\phi$; number of bootstrap models $B$; batch size
+  $s_0 \geq 1$; seasonal period $\Sper$; test data
+  $\{(x_t, y_t)\}_{t=T+1}^{T+T_1}$
+  ($y_t$ revealed only after prediction at $t$).}
+
+\Ensure{Stratified prediction intervals
+  $\{\hat{C}_t^{\alpha,\textup{strat}}(x_t)\}_{t=T+1}^{T+T_1}$.}
+
+\BlankLine
+\tcp{\textbf{TRAINING PHASE} (identical to \citet[Alg.~1]{xu2023conformal})}
+\For{$b = 1, \ldots, B$}{
+  Sample index set $S_b = (i_1, \ldots, i_T)$ from $[T]$ with
+  replacement\;
+  Compute $\hat{f}^{\,b} = \calA\!\bigl((x_i, y_i),\; i \in S_b\bigr)$\;
+}
+Initialise $S$ empty ordered sets
+$\hat{\boldsymbol\epsilon}^{(1)}, \ldots, \hat{\boldsymbol\epsilon}^{(\Sper)}$\;
+\For{$i = 1, \ldots, T$}{
+  $\hat{f}_{-i}^{\,\phi}(x_i) \leftarrow
+    \phi\!\bigl(\hat{f}^{\,b}(x_i),\; i \notin S_b\bigr)$\;
+  $\hat{\epsilon}_i \leftarrow y_i - \hat{f}_{-i}^{\,\phi}(x_i)$\;
+  $\hat{\boldsymbol\epsilon}^{(s(i))} \leftarrow
+    \hat{\boldsymbol\epsilon}^{(s(i))} \cup \{\hat{\epsilon}_i\}$\;
+  \Comment{route residual to its season's buffer}
+}
+
+\BlankLine
+\tcp{\textbf{PREDICTION PHASE}}
+\For{$t = T+1, \ldots, T+T_1$}{
+  $\sstar \leftarrow s(t)$\;
+  $\hat{f}_{-t}^{\,\phi}(x_t) \leftarrow
+    \phi\!\bigl(\hat{f}_{-i}^{\,\phi}(x_t),\; i = 1, \ldots, T\bigr)$\;
+  Compute $\hat{\beta}^{(\sstar)}$ as
+  $\arg\min_{\beta \in [0,\alpha]}
+  \bigl[\Quant{1-\alpha+\beta}{\hat{\boldsymbol\epsilon}^{(\sstar)}}
+  -\Quant{\beta}{\hat{\boldsymbol\epsilon}^{(\sstar)}}\bigr]$
+  via line search\;
+  $w_{\text{lo}} \leftarrow
+    \Quant{\hat{\beta}^{(\sstar)}}{\hat{\boldsymbol\epsilon}^{(\sstar)}}$\;
+  $w_{\text{hi}} \leftarrow
+    \Quant{1-\alpha+\hat{\beta}^{(\sstar)}}{\hat{\boldsymbol\epsilon}^{(\sstar)}}$\;
+  \Return $\hat{C}_t^{\alpha,\textup{strat}}(x_t) \leftarrow
+    [\hat{f}_{-t}^{\,\phi}(x_t) + w_{\text{lo}},\;
+     \hat{f}_{-t}^{\,\phi}(x_t) + w_{\text{hi}}]$\;
+  \If{$(t - T) \equiv 0 \pmod{s_0}$}{
+    \For{$j = t - s_0, \ldots, t - 1$}{
+      $\hat{\epsilon}_j \leftarrow y_j - \hat{f}_{-j}^{\,\phi}(x_j)$\;
+      Remove oldest element from
+        $\hat{\boldsymbol\epsilon}^{(s(j))}$;
+      append $\hat{\epsilon}_j$\;
+      \Comment{slide only the season-$s(j)$ buffer}
+    }
+  }
+}
+\end{algorithm}
+%------------------------------------------------------------
+
+%------------------------------------------------------------
+\subsection{Properties of \texttt{EnbPI-S}}
+\label{sec:algorithm:properties}
+%------------------------------------------------------------
+
+\paragraph{Computational cost.}
+\texttt{EnbPI-S} incurs negligible additional cost relative to
+EnbPI.  The training phase is identical.  In the prediction phase,
+the only change is that the line search~\eqref{eq:betahat_strat}
+and the quantile evaluations are performed on a buffer of size
+$T_{\sstar} \approx T/\Sper$ rather than $T$.  For $\Sper = 12$
+and the typical batch size $s_0 = 1$, this reduces each step's
+cost by a factor of $\Sper$.  The total memory for
+$\Sper$ buffers is still $T$ residuals.
+
+\paragraph{No data splitting.}
+As in EnbPI, \texttt{EnbPI-S} requires no data splitting: all
+$T$ training observations are used to fit the $B$ bootstrap
+models, and all $T$ LOO residuals are used to populate the $\Sper$
+stratified buffers.  This stands in contrast to Mondrian CP for
+i.i.d.\ data \citep{vovk2005mondrian,dewolf2023conditional},
+where the calibration set must be divided among the $\Sper$ classes,
+reducing the effective calibration size to $T/\Sper$ per class.
+In \texttt{EnbPI-S}, the training set is shared across seasons via
+the LOO ensemble, while only the residual calibration is stratified.
+
+\paragraph{Season-adaptive asymmetry.}
+The line search~\eqref{eq:betahat_strat} selects an
+\emph{optimal asymmetric quantile pair} $(\hat{\beta}^{(\sstar)},
+1-\alpha+\hat{\beta}^{(\sstar)})$ tailored to the empirical
+distribution of season-$\sstar$ residuals.  For seasons in which
+forecast errors are right-skewed (e.g.\ large positive surprises
+dominate, as in January for the IPCA), the optimiser will select
+$\hat{\beta}^{(\sstar)} < \alpha/2$, producing a left-asymmetric
+interval.  This adapts to distributional shape, not just scale.
+
+\paragraph{Slide rule.}
+The update rule~\eqref{eq:slide_strat} ensures that each
+season-$s$ buffer always contains the $T_s$ most recent residuals
+from season $s$.  As a result, \texttt{EnbPI-S} tracks potential
+slow drift in $\sigma_s$ over time (e.g.\ structural changes in
+seasonal volatility patterns), while being robust to contamination
+from other seasons.
+
+%------------------------------------------------------------
+\subsection{Relation to Existing Methods}
+\label{sec:algorithm:relation}
+%------------------------------------------------------------
+
+\paragraph{Relation to Mondrian CP.}
+Mondrian conformal prediction \citep{vovk2005mondrian} stratifies
+the calibration set of an inductive conformal predictor by a
+categorical label $\kappa(x, y)$, guaranteeing that the resulting
+intervals are conditionally valid within each category under
+exchangeability.  \texttt{EnbPI-S} can be viewed as the
+non-exchangeable time-series analogue of Mondrian CP with
+$\kappa(x_t, y_t) = s(t)$ (calendar season).  Unlike Mondrian CP,
+\texttt{EnbPI-S} operates without data splitting (the bootstrap
+training uses all observations) and provides
+coverage guarantees under temporal dependence.
+
+\paragraph{Relation to SPCI.}
+The \emph{Sequential Predictive Conformal Inference} algorithm
+\citep{xu2023sequential} constructs prediction intervals by
+estimating the conditional quantile of the next residual via
+a quantile random forest trained on past residuals.  SPCI
+exploits serial correlation in residuals to produce narrower
+intervals when residuals are autocorrelated.  \texttt{EnbPI-S}
+and SPCI address complementary sources of miscoverage:
+SPCI corrects for residual autocorrelation; \texttt{EnbPI-S}
+corrects for seasonal heteroskedasticity.  The two approaches
+are compatible and can in principle be combined
+(see Section~\ref{sec:conclusion}).
+
+\paragraph{Relation to normalised CP.}
+\citet{dewolf2023conditional} show that, for i.i.d.\ data from a
+location-scale family, normalised CP (which divides each residual
+by an estimate of $\sigma(x)$) achieves conditional validity
+without Mondrian stratification.  In our setting,
+if the prediction algorithm $\calA$ includes explicit seasonal
+dummy variables, it may implicitly estimate $\hat{\sigma}(x)
+\approx \sigma_{s(t)}$, in which case the normalised residuals
+would be approximately pivotal and pooled calibration would
+suffice.  \texttt{EnbPI-S} is designed for the realistic case
+where such normalisation is either infeasible (model-free
+predictors) or imperfect, providing a clean and model-agnostic
+remedy.

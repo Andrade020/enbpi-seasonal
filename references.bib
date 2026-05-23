@@ -1,0 +1,309 @@
+%% ============================================================
+%% references.bib
+%% EnbPI for Seasonal Time Series
+%%
+%% IMPORTANT: entries marked [VERIFY] need DOI / volume
+%% confirmation before submission.
+%% ============================================================
+
+%% ---- Core conformal prediction papers ----
+
+@article{xu2023conformal,
+  author  = {Xu, Chen and Xie, Yao},
+  title   = {Conformal Prediction for Time Series},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {45},
+  number  = {10},
+  pages   = {11749--11762},
+  year    = {2023},
+  doi     = {10.1109/TPAMI.2023.3272339}
+}
+
+@inproceedings{xu2023sequential,
+  author    = {Xu, Chen and Xie, Yao},
+  title     = {Sequential Predictive Conformal Inference for Time Series},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {202},
+  pages     = {38707--38727},
+  year      = {2023},
+  publisher = {PMLR},
+  url       = {https://proceedings.mlr.press/v202/xu23r.html}
+}
+
+@article{dewolf2023conditional,
+  author  = {Dewolf, Nicolas and De Baets, Bernard and Waegeman, Willem},
+  title   = {Conditional Validity of Heteroskedastic Conformal Regression},
+  journal = {arXiv preprint arXiv:2309.08313},
+  year    = {2023},
+  note    = {[VERIFY: check journal publication status]}
+}
+
+@article{sousa2024general,
+  author  = {Sousa, Martim and Pinto, Tom{\'a}s and Vale, Zita},
+  title   = {A General Framework for Multi-Step Ahead Adaptive Conformal
+             Heteroscedastic Time Series Forecasting},
+  journal = {Neurocomputing},
+  volume  = {599},
+  pages   = {128434},
+  year    = {2024},
+  doi     = {10.1016/j.neucom.2024.128434}
+}
+
+@article{shafer2008tutorial,
+  author  = {Shafer, Glenn and Vovk, Vladimir},
+  title   = {A Tutorial on Conformal Prediction},
+  journal = {Journal of Machine Learning Research},
+  volume  = {9},
+  pages   = {371--421},
+  year    = {2008}
+}
+
+@inproceedings{papadopoulos2007conformal,
+  author    = {Papadopoulos, Harris and Vovk, Vladimir and Gammerman, Alexander},
+  title     = {Conformal Prediction with Neural Networks},
+  booktitle = {19th IEEE International Conference on Tools with Artificial Intelligence (ICTAI 2007)},
+  volume    = {2},
+  pages     = {388--395},
+  year      = {2007}
+}
+
+@article{barber2021predictive,
+  author  = {Barber, Rina Foygel and Cand\`es, Emmanuel J. and Ramdas, Aaditya and Tibshirani, Ryan J.},
+  title   = {Predictive Inference with the Jackknife+},
+  journal = {The Annals of Statistics},
+  volume  = {49},
+  number  = {1},
+  pages   = {486--507},
+  year    = {2021}
+}
+
+@article{barber2023conformal,
+  author  = {Barber, Rina Foygel and Cand\`es, Emmanuel J. and Ramdas, Aaditya and Tibshirani, Ryan J.},
+  title   = {Conformal Prediction Beyond Exchangeability},
+  journal = {The Annals of Statistics},
+  volume  = {51},
+  number  = {2},
+  pages   = {816--845},
+  year    = {2023}
+}
+
+@inproceedings{romano2019conformalized,
+  author    = {Romano, Yaniv and Patterson, Evan and Cand\`es, Emmanuel J.},
+  title     = {Conformalized Quantile Regression},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {32},
+  pages     = {3543--3553},
+  year      = {2019}
+}
+
+@article{kim2020predictive,
+  author  = {Kim, Byol and Xu, Chen and Barber, Rina Foygel},
+  title   = {Predictive Inference Is Free with the Jackknife+-after-Bootstrap},
+  journal = {Advances in Neural Information Processing Systems},
+  volume  = {33},
+  pages   = {4138--4149},
+  year    = {2020}
+}
+
+@article{gibbs2021adaptive,
+  author  = {Gibbs, Isaac and Cand\`es, Emmanuel J.},
+  title   = {Adaptive Conformal Inference Under Distribution Shift},
+  journal = {Advances in Neural Information Processing Systems},
+  volume  = {34},
+  pages   = {1660--1672},
+  year    = {2021}
+}
+
+@article{tibshirani2019conformal,
+  author  = {Tibshirani, Ryan J. and Barber, Rina Foygel and Cand\`es, Emmanuel J. and Ramdas, Aaditya},
+  title   = {Conformal Prediction Under Covariate Shift},
+  journal = {Advances in Neural Information Processing Systems},
+  volume  = {32},
+  pages   = {2530--2540},
+  year    = {2019}
+}
+
+@article{gupta2021nested,
+  author  = {Gupta, Chirag and Kuchibhotla, Arun K. and Ramdas, Aaditya},
+  title   = {Nested Conformal Prediction and Quantile Out-of-Bag Ensemble Methods},
+  journal = {Pattern Recognition},
+  volume  = {127},
+  pages   = {108496},
+  year    = {2022}
+}
+
+%% ---- Theoretical tools ----
+
+@article{dvoretzky1956asymptotic,
+  author  = {Dvoretzky, Aryeh and Kiefer, Jack and Wolfowitz, Jacob},
+  title   = {Asymptotic Minimax Character of the Sample Distribution Function and of the Classical Multinomial Estimator},
+  journal = {Annals of Mathematical Statistics},
+  volume  = {27},
+  number  = {3},
+  pages   = {642--669},
+  year    = {1956}
+}
+
+@article{massart1990tight,
+  author  = {Massart, Pascal},
+  title   = {The Tight Constant in the {Dvoretzky--Kiefer--Wolfowitz} Inequality},
+  journal = {The Annals of Probability},
+  volume  = {18},
+  number  = {3},
+  pages   = {1269--1283},
+  year    = {1990}
+}
+
+@article{rosenblatt1956central,
+  author  = {Rosenblatt, Murray},
+  title   = {A Central Limit Theorem and a Strong Mixing Condition},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {42},
+  number  = {1},
+  pages   = {43--47},
+  year    = {1956}
+}
+
+@book{rio2017asymptotic,
+  author    = {Rio, Emmanuel},
+  title     = {Asymptotic Theory of Weakly Dependent Random Processes},
+  volume    = {80},
+  publisher = {Springer},
+  address   = {Berlin},
+  year      = {2017}
+}
+
+@book{wolpert1997no,
+  author    = {Wolpert, David H. and Macready, William G.},
+  title     = {No Free Lunch Theorems for Optimization},
+  journal   = {IEEE Transactions on Evolutionary Computation},
+  volume    = {1},
+  number    = {1},
+  pages     = {67--82},
+  year      = {1997}
+}
+
+%% ---- Seasonal time series ----
+
+@book{franses2004periodic,
+  author    = {Franses, Philip Hans and Paap, Richard},
+  title     = {Periodic Time Series Models},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  year      = {2004}
+}
+
+@book{hyndman2008forecasting,
+  author    = {Hyndman, Rob J. and Koehler, Anne B. and Ord, J. Keith and Snyder, Ralph D.},
+  title     = {Forecasting with Exponential Smoothing: The State Space Approach},
+  publisher = {Springer},
+  address   = {Berlin},
+  year      = {2008}
+}
+
+@book{brockwell1991time,
+  author    = {Brockwell, Peter J. and Davis, Richard A.},
+  title     = {Time Series: Theory and Methods},
+  edition   = {2nd},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {1991}
+}
+
+@book{durbin2012time,
+  author    = {Durbin, James and Koopman, Siem Jan},
+  title     = {Time Series Analysis by State Space Methods},
+  edition   = {2nd},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  year      = {2012}
+}
+
+@article{ghysels1994unit,
+  author  = {Ghysels, Eric and Osborn, Denise R.},
+  title   = {The Econometric Analysis of Seasonal Time Series},
+  journal = {Cambridge University Press},
+  year    = {2001},
+  note    = {[VERIFY: check full bibliographic details]}
+}
+
+%% ---- Neural network / ML predictors (used as baselines) ----
+
+@article{breiman2001random,
+  author  = {Breiman, Leo},
+  title   = {Random Forests},
+  journal = {Machine Learning},
+  volume  = {45},
+  number  = {1},
+  pages   = {5--32},
+  year    = {2001}
+}
+
+@article{breiman1996bagging,
+  author  = {Breiman, Leo},
+  title   = {Bagging Predictors},
+  journal = {Machine Learning},
+  volume  = {24},
+  number  = {2},
+  pages   = {123--140},
+  year    = {1996}
+}
+
+%% ---- Brazilian macroeconomic data ----
+
+@misc{ibge2024ipca,
+  author       = {{IBGE}},
+  title        = {{\'I}ndice Nacional de Pre\c{c}os ao Consumidor Amplo ({IPCA}) --- Tabela 1737},
+  year         = {2024},
+  howpublished = {Sistema {IBGE} de Recupera\c{c}\~ao Autom\'atica ({SIDRA}). Available at \url{https://sidra.ibge.gov.br/tabela/1737}},
+  note         = {Accessed: 2024}
+}
+
+@misc{bcb2024sgs,
+  author       = {{Banco Central do Brasil}},
+  title        = {Sistema Gerenciador de S\'eries Temporais ({SGS})},
+  year         = {2024},
+  howpublished = {\url{https://www.bcb.gov.br/estabilidadefinanceira/sgs}},
+  note         = {Series 4390 (Taxa Selic meta), Series 1 (US Dollar exchange rate). Accessed: 2024}
+}
+
+%% ---- Forecast evaluation ---
+
+@article{gneiting2007strictly,
+  author  = {Gneiting, Tilmann and Raftery, Adrian E.},
+  title   = {Strictly Proper Scoring Rules, Prediction, and Estimation},
+  journal = {Journal of the American Statistical Association},
+  volume  = {102},
+  number  = {477},
+  pages   = {359--378},
+  year    = {2007}
+}
+
+@article{winkler1972decision,
+  author  = {Winkler, Robert L.},
+  title   = {A Decision-Theoretic Approach to Interval Estimation},
+  journal = {Journal of the American Statistical Association},
+  volume  = {67},
+  number  = {337},
+  pages   = {187--191},
+  year    = {1972}
+}
+
+%% ---- Mondrian (stratified) conformal prediction ----
+%% The term "Mondrian conformal prediction" was introduced in:
+@incollection{vovk2005mondrian,
+  author    = {Vovk, Vladimir and Gammerman, Alexander and Shafer, Glenn},
+  title     = {Algorithmic Learning in a Random World},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {2005},
+  note      = {Mondrian CP introduced in Chapter 4.}
+}
+
+%% ---- Inflation forecasting ---
+%% [entries to be added after article summaries from Lucas]
+
+%% ============================================================
+%% END OF FILE
+%% ============================================================

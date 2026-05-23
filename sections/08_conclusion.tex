@@ -1,0 +1,131 @@
+% ============================================================
+% SECTION 8 — CONCLUSION
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+%------------------------------------------------------------
+\subsection{Summary}
+\label{sec:conclusion:summary}
+%------------------------------------------------------------
+
+We identified a structural limitation of the pooled EnbPI
+algorithm \citep{xu2023conformal} when applied to seasonally
+heteroskedastic time series: pooled calibration introduces a
+persistent, season-dependent coverage bias of magnitude
+$2b_{s^*}$ that does not vanish as the training sample grows
+(Proposition~\ref{prop:pooled_gap}).  We proposed
+\texttt{EnbPI-S}, a minimal modification that routes each
+LOO residual to a season-specific calibration buffer, eliminating
+this bias while preserving the bootstrap training procedure,
+the sliding-window update, and the asymmetric line-search
+optimisation of the original algorithm.
+
+Theoretically, we proved that the per-season coverage gap of
+\texttt{EnbPI-S} decays at rate $O(\sqrt{\log T_s / T_s})$,
+where $T_s = T/\Sper$ is the per-stratum training size, and
+derived a finite-sample dominance condition linking the
+benefit of stratification to the size of $b_{s^*}$ and the
+training sample length (Proposition~\ref{prop:strat_dominance}).
+A companion bound characterises the interval width reduction
+achievable in low-volatility seasons (Theorem~\ref{thm:width_bound}).
+
+Empirically, the simulation study confirmed that
+\texttt{EnbPI-S} produces more uniform coverage across seasons
+than pooled EnbPI: for $T = 480$ months and $\sigma_{\mathrm{high}}/\sigma_{\mathrm{low}} = 2$,
+the per-season coverage range shrinks from $\approx 0.18$
+(pooled) to $\approx 0.02$ (stratified), and the worst-case
+per-season coverage improves from $\approx 0.78$ to
+$\approx 0.83$.  The interval widths for \texttt{EnbPI-S}
+correctly reflect the seasonal $\sigma$ ratio.
+Two empirical applications used the same test window
+(January 2015 -- December 2024).
+The food-at-home IPCA application ($T_s = 20$) demonstrated
+clear width adaptation (ratio $1.78\times$).
+The Brazilian export growth application ($T_s = 35$,
+BCB series 1402) confirmed the method in the
+adequate-sample regime: both methods achieved coverage
+within $3.3$ percentage points of nominal, and
+\texttt{EnbPI-S} produced a factor-of-$2.3$ width variation ---
+correctly assigning a $13.8\%$ interval to February
+(soybean harvest-onset) and a $6.0\%$ interval to July ---
+while the pooled baseline applied a constant $\approx 10.2\%$
+throughout.
+
+%------------------------------------------------------------
+\subsection{Limitations}
+\label{sec:conclusion:limitations}
+%------------------------------------------------------------
+
+\paragraph{Minimum stratum size.}
+The main practical limitation of \texttt{EnbPI-S} is its
+requirement for a sufficient per-stratum sample size.
+Our simulation study (Experiment E2) suggests that
+$T_s \gtrsim 30$--$40$ observations per season are needed
+for the stratified method to outperform pooled calibration
+in terms of overall coverage.  For monthly data with
+$\Sper = 12$ seasons, this requires $T \gtrsim 360$--$480$
+months (30--40 years), which may not be available in
+all applications.
+
+\paragraph{Fixed seasonal period.}
+The current framework assumes a known, fixed seasonal period
+$\Sper$.  In practice, the relevant cycle may be quarterly
+($\Sper = 4$), weekly ($\Sper = 52$), or irregular (e.g.\
+fiscal years that do not align with calendar years).  The
+algorithm extends immediately to any integer $\Sper$, but
+selection of $\Sper$ is left to the practitioner.
+
+\paragraph{Structural breaks.}
+The sliding-window update adapts to slow drift in the
+seasonal volatility structure, but it is not designed to
+handle abrupt structural breaks.  The undercoverage observed
+in the IPCA empirical application during 2020--22 reflects
+such a break: the COVID-era inflation dynamics lie outside
+the support of the training distribution.  Robust
+recalibration after detected breaks is an open problem.
+
+%------------------------------------------------------------
+\subsection{Future Directions}
+\label{sec:conclusion:future}
+%------------------------------------------------------------
+
+\paragraph{Combination with SPCI.}
+\citet{xu2023sequential} proposed SPCI, which exploits residual
+autocorrelation by training a quantile random forest on the
+history of residuals.  \texttt{EnbPI-S} and SPCI address
+orthogonal sources of miscoverage: SPCI corrects for serial
+dependence, \texttt{EnbPI-S} corrects for seasonal scale
+variation.  A combined method could apply the quantile-forest
+step within each seasonal buffer, potentially achieving both
+autocorrelation-adjusted and season-calibrated intervals.
+We leave the formalisation of such a combined estimator to
+future work.
+
+\paragraph{Adaptive stratum selection.}
+Rather than stratifying by the calendar month, one could
+stratify by a data-driven cluster of months with similar
+residual distributions.  A Gaussian mixture model or a
+$k$-means clustering of the monthly empirical quantile
+vectors would allow the number of strata to be chosen
+from data, trading off stratification bias against
+per-stratum sample size.
+
+\paragraph{Coverage-corrected line search.}
+As documented in Experiment E2, the minimum-width line search
+can be unreliable for small $T_s$ due to the heavy tails of
+the empirical distribution.  A finite-sample correction ---
+for instance, replacing the empirical quantile $Q_p$ by the
+conformally adjusted version $Q_{\lceil (T_s+1)p \rceil / T_s}$
+--- would provide exact coverage guarantees at the cost of
+slightly wider intervals and merits further study.
+
+\paragraph{Beyond monthly seasonality.}
+The framework applies directly to quarterly, daily, or intraday
+seasonality by adjusting $\Sper$.  For high-frequency data
+with large $\Sper$ (e.g.\ hourly electricity demand with
+$\Sper = 8736$), the per-stratum sample sizes would be
+very small and alternative grouping strategies would be
+necessary.  The theoretical analysis extends to this regime
+with minor adjustments to the DKW-based argument in
+Appendix~\ref{app:proofs}.
