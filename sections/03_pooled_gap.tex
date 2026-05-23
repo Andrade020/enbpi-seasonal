@@ -173,15 +173,14 @@ union bound over $\Sper$ seasons yields a contribution of order
 $\sqrt{\log(16T_s)/T_s} = \sqrt{\Sper\log(16T/\Sper)/T}$,
 which converges to zero as $T\to\infty$ for fixed $\Sper$.
 The full proof in Appendix~\ref{app:proofs} carries out this
-argument precisely and verifies that the multiplicative constant
-in term~(i) of~\eqref{eq:pooled_gap} is $12$, as in
-\citet{xu2023conformal}.\footnote{%
-  For fixed $\Sper$, the factor $\sqrt{\Sper\log(16T/\Sper)/T}$
-  has the same asymptotic order as $\sqrt{\log(16T)/T}$, so the
-  rate of convergence of term~(i) is $O(T^{-1/2})$ in both cases.
-  The precise constant differs by a factor of $\sqrt{\Sper}$;
-  this is the price of pooling non-homogeneous data.
-}
+argument precisely.  The key step is to apply the DKW inequality
+directly to the $T$ mutually independent (though not identically
+distributed) errors pooled across all seasons; the DKW bound
+$\Prob(\sup_x|\tilde{F}_T^{\text{pool}}(x)-\bar{F}(x)|>u)
+\leq 2e^{-2Tu^2}$ holds for any sequence of independent random
+variables \citep{massart1990tight}, not just i.i.d.\ ones,
+yielding the $T$-based term~(i) with constant $12$ as in
+\citet{xu2023conformal}.
 
 \emph{Term (C)} equals $\bsstar$ by
 Definition~\ref{def:seasonal_bias}, and is independent of $T$.

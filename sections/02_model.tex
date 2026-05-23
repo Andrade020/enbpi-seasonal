@@ -165,9 +165,9 @@ The prediction interval is
   \Bigr].
 \end{equation}
 %
-Every $s \geq 1$ steps, once actual responses become available, the
-buffer is updated by discarding the $s$ oldest residuals and appending
-$s$ new ones, producing a sliding window of size $T$.
+Every $s_0 \geq 1$ steps, once actual responses become available, the
+buffer is updated by discarding the $s_0$ oldest residuals and appending
+$s_0$ new ones, producing a sliding window of size $T$.
 
 \paragraph{Coverage guarantee.}
 The validity of EnbPI rests on two assumptions.
@@ -373,15 +373,17 @@ Hence:
   b_H \;=\; \tfrac{3}{4}(0.248 - 0.087) \;\approx\; 0.12.
 \]
 
-This represents a \emph{persistent} 12 percentage-point miscoverage
-in high-volatility seasons at a nominal level of $\alpha = 0.10$.
+Since the coverage gap bound is $2b_H \approx 0.24$, pooled
+calibration can introduce a \emph{persistent} coverage gap of
+up to $24$ percentage points in high-volatility seasons at a
+nominal level of $\alpha = 0.10$.
 Crucially, $b_H$ is independent of $T$ by
 Lemma~\ref{lem:bias_properties}(ii): collecting more data does not
 reduce it.  In contrast, the statistical fluctuation in the empirical
 CDF decays at rate $O(T^{-1/2})$.  Therefore, for all sufficiently
 large $T$, the dominant source of coverage error in high-volatility
-seasons is the fixed seasonal bias $b_H$, not sampling variability.
-Section~\ref{sec:pooled_gap} makes this precise.\medskip
+seasons is the fixed seasonal bias $2b_H$, not sampling variability.
+Proposition~\ref{prop:pooled_gap} makes this precise.\medskip
 
 We close this section by noting that model~\eqref{eq:seasonal_model}
 nests the homoskedastic case of \citet{xu2023conformal}

@@ -235,9 +235,13 @@ The results suggest that \texttt{EnbPI-S} requires at least
 $T_s \approx 30$--$40$ observations per season to be competitive
 with pooled EnbPI.  For monthly data with $\Sper = 12$, this
 corresponds to $T \approx 360$--$480$ months ($30$--$40$ years).
-For the IPCA application in Section~\ref{sec:empirical}, which
-uses data from 1995 onwards ($T \approx 360$), \texttt{EnbPI-S}
-is at the boundary of this recommended range.
+The food-IPCA application (Section~\ref{sec:empirical:food})
+uses $T = 240$ months ($\Ts = 20$), below this range, which
+is consistent with the coverage shortfall observed there.
+The export growth application (Section~\ref{sec:empirical:exports})
+uses $T = 430$ months ($\Ts \approx 35$), falling within the
+recommended range and achieving coverage within $3.3$ percentage
+points of nominal.
 \end{remark}
 
 %------------------------------------------------------------
@@ -311,7 +315,7 @@ forecast $\hat{f}$.  We verify this by repeating the main
 experiment with $T = 240$ and $\sigma_{\mathrm{high}} = 2$
 using two base learners: Ridge regression and a Random Forest.
 In both cases, the qualitative pattern is preserved: pooled
-EnbPI overcoveres low-volatility and undercoveres
+EnbPI overcovers low-volatility and undercovers
 high-volatility seasons, while \texttt{EnbPI-S} reduces this
 dispersion.  The magnitude of the effect is nearly identical
 across learners, confirming that the gain from stratification

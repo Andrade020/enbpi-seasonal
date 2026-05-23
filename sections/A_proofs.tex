@@ -106,38 +106,27 @@ where $L = \max_s L_s$.
 
 \medskip
 \noindent\textit{Step 4 (bounding term (B) via DKW).}
-Decompose $\tilde{F}_T^{\text{pool}} - \bar{F}$ by season:
+The errors $\{\epsilon_t\}_{t=1}^T$ are mutually independent
+with marginal distributions $F_{s(t)}$ (Assumption~\ref{ass:seasonal}).
+The DKW inequality \citep{massart1990tight} holds for any sequence
+of independent random variables, whether or not they are identically
+distributed: for $T$ independent observations the pooled empirical CDF
+$\tilde{F}_T^{\text{pool}}(x) = T^{-1}\sum_{t=1}^T\Ind{\epsilon_t\leq x}$
+satisfies
 \[
-  \tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)
-  = \frac{1}{\Sper}\sum_{s=1}^\Sper
-    \bigl[\tilde{F}_{T_s,s}(x) - F_s(x)\bigr],
+  \Prob\!\Bigl(\sup_x\bigl|\tilde{F}_T^{\text{pool}}(x)-\bar{F}(x)\bigr| > u\Bigr)
+  \;\leq\; 2e^{-2Tu^2},
 \]
-where $\tilde{F}_{T_s,s}(x) = T_s^{-1}\sum_{t \in \calT_s}
-\Ind{\epsilon_t \leq x}$ is the within-season empirical CDF.
-Each within-season sequence $\{\epsilon_t : t \in \calT_s\}$
-is i.i.d.\ from $F_s$ (Assumption~\ref{ass:seasonal}), so
-the Dvoretzky--Kiefer--Wolfowitz (DKW) inequality
-\citep{massart1990tight} gives:
-\[
-  \Prob\!\Bigl(\sup_x\bigl|\tilde{F}_{T_s,s}(x)-F_s(x)\bigr| > u\Bigr)
-  \;\leq\; 2e^{-2T_s u^2}.
-\]
-Define the good event $A_T = \bigcap_{s=1}^\Sper
-\{\sup_x|\tilde{F}_{T_s,s}(x)-F_s(x)| \leq v_T\}$,
-where $v_T = \sqrt{W(16T_s)}/(2\sqrt{T_s}) \leq \sqrt{\log(16T_s)/T_s}$
-and $W(\cdot)$ is the Lambert $W$ function.  A union bound gives:
-\[
-  \Prob(A_T^c)
-  \;\leq\; \Sper \cdot v_T
-  \;\leq\; \Sper\sqrt{\log(16T_s)/T_s}.
-\]
+since $E[\tilde{F}_T^{\text{pool}}(x)] = T^{-1}\sum_{t=1}^T F_{s(t)}(x) = \bar{F}(x)$
+(balanced panel) and the bounded-difference condition with
+$c_t = 2/T$ applies regardless of the marginal distributions.
+Define $v_T = \sqrt{W(16T)}/(2\sqrt{T}) \leq \sqrt{\log(16T)/T}$
+and the good event $A_T = \{\sup_x|\tilde{F}_T^{\text{pool}}(x)-\bar{F}(x)| \leq v_T\}$,
+so that $\Prob(A_T^c) \leq \sqrt{\log(16T)/T}$.
 On the event $A_T$:
 \[
   \sup_x\bigl|\tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)\bigr|
-  \;\leq\;
-  \max_s\sup_x\bigl|\tilde{F}_{T_s,s}(x)-F_s(x)\bigr|
-  \;\leq\; v_T
-  \;\leq\; \sqrt{\frac{\log(16T_s)}{T_s}}.
+  \;\leq\; v_T \;\leq\; \sqrt{\frac{\log(16T)}{T}}.
 \]
 
 \medskip
@@ -187,7 +176,7 @@ with $T_s$ i.i.d.\ draws and Assumption~\ref{ass:xu_a2}) yields:
 \[
   \bigl|\Prob(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\text{pool}} \mid X_{T+1}=x_{T+1}) - (1-\alpha)\bigr|
   \;\leq\;
-  12\sqrt{\frac{\log(16\Ts)}{\Ts}}
+  12\sqrt{\frac{\log(16T)}{T}}
   + 4(L+1)(\deltaT^{2/3}+\deltaT)
   + 2\bsstar,
 \]

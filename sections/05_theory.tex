@@ -120,8 +120,8 @@ The critical difference is:
   \item Theorem~\ref{thm:xu_original} uses $T$ (total training
     observations) and $\deltaT$; Theorem~\ref{thm:strat_coverage}
     uses $\Ts = T/\Sper$ and $\deltaTs$.  The stratified bound
-    converges at the slower rate $O(T^{-1/2}/\sqrt{\Sper})$
-    due to the smaller effective sample size.
+    converges at the slower rate $O(\sqrt{\Sper}\cdot T^{-1/2})$
+    due to the smaller effective sample size $\Ts = T/\Sper$.
 
   \item Theorem~\ref{thm:xu_original} is \emph{only valid} when
     Assumption~\ref{ass:xu_a1} holds (common CDF for all errors),
@@ -206,15 +206,20 @@ and~\ref{ass:seasonal} hold, and that $\deltaTs \to 0$ and
 $\deltaT \to 0$ as $T \to \infty$.  Then:
 \begin{enumerate}
   \item[\textup{(i)}]
-    The pooled bound (Proposition~\ref{prop:pooled_gap}) satisfies:
+    The right-hand side of the pooled bound
+    (Proposition~\ref{prop:pooled_gap}) does not converge to zero:
     \[
-      \liminf_{T \to \infty}
-      \bigl|
-        \Prob(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\textup{pool}})
-        - (1-\alpha)
-      \bigr|
-      \;\geq\; 2\bsstar.
+      \lim_{T \to \infty}
+      \Bigl[
+        12\sqrt{\tfrac{\log(16T)}{T}}
+        + 4(L+1)\!\left(\deltaT^{2/3}+\deltaT\right)
+        + 2\bsstar
+      \Bigr]
+      \;=\; 2\bsstar.
     \]
+    Hence the coverage guarantee for pooled \texttt{EnbPI} is
+    bounded below by $2\bsstar > 0$ for all $T$: no amount of
+    additional data drives the bound to zero.
 
   \item[\textup{(ii)}]
     The stratified bound (Theorem~\ref{thm:strat_coverage}) satisfies:
@@ -228,19 +233,29 @@ $\deltaT \to 0$ as $T \to \infty$.  Then:
     \]
 
   \item[\textup{(iii)}]
-    Consequently, whenever $\bsstar > 0$, stratification strictly
-    dominates pooling in asymptotic coverage for season $\sstar$.
-    By Lemma~\ref{lem:bias_properties}(i), $\bsstar > 0$ if and
-    only if not all seasonal scales are equal.
+    Consequently, whenever $\bsstar > 0$, the coverage guarantee
+    for pooled \texttt{EnbPI} remains bounded below by
+    $2\bsstar > 0$ for all $T$, while the stratified guarantee
+    converges to zero.  By Lemma~\ref{lem:bias_properties}(i),
+    $\bsstar > 0$ if and only if not all seasonal scales are equal.
+    Stratification therefore provides a strictly tighter theoretical
+    guarantee than pooling whenever seasonal heteroskedasticity
+    is present.
 \end{enumerate}
 \end{proposition}
 
 \begin{proof}
-  Parts~(i) and~(ii) follow directly from
-  Proposition~\ref{prop:pooled_gap} and
-  Theorem~\ref{thm:strat_coverage}, letting $T \to \infty$ and
-  using the hypothesis $\deltaT, \deltaTs \to 0$.  Part~(iii)
-  combines (i) and (ii) with Lemma~\ref{lem:bias_properties}.
+  Part~(i): the sampling term
+  $12\sqrt{\log(16T)/T} \to 0$ and the estimation term
+  $4(L+1)(\deltaT^{2/3}+\deltaT) \to 0$ by hypothesis; the bias
+  term $2\bsstar$ is independent of $T$
+  (Lemma~\ref{lem:bias_properties}(ii)), so the limit of the
+  right-hand side of~\eqref{eq:pooled_gap} is $2\bsstar$.
+  Part~(ii) follows from Theorem~\ref{thm:strat_coverage}: both
+  terms on the right of~\eqref{eq:strat_bound} vanish as
+  $\Ts \to \infty$ (which occurs as $T\to\infty$ for fixed $\Sper$).
+  Part~(iii) combines (i) and (ii) with
+  Lemma~\ref{lem:bias_properties}(i).
 \end{proof}
 
 \paragraph{Finite-sample trade-off.}
@@ -283,8 +298,8 @@ trivially satisfied for any $b_{\sstar} \in [0,1/2]$.  The bounds
 alone thus cannot adjudicate between methods at $T = 120$.  This suggests that the theoretical bounds
 alone cannot adjudicate between methods for $T = 120$; the
 asymptotic comparison in Proposition~\ref{prop:strat_dominance}
-is more informative.  However, for the IPCA application with
-$T = 216$ months of training data, the seasonal bias
+is more informative.  However, for the food-IPCA application with
+$T = 240$ months of training data ($\Ts = 20$), the seasonal bias
 $\bsstar \approx 0.12$ (computed in Section~\ref{sec:model:seasonal})
 is a fixed empirical quantity that does not shrink with $T$,
 while the sampling terms do.  The simulation in
@@ -331,7 +346,10 @@ where:
     (\hat{\epsilon}_{j+1}^{(\sstar)} - \hat{\epsilon}_j^{(\sstar)})$
     is the largest gap between consecutive sorted
     within-stratum LOO residuals;
-  \item $M_{\sstar} = 2K_{\sstar}/|1/K'_{\sstar} - L_{\sstar}|$.
+  \item $M_{\sstar} = 2K_{\sstar}/|1/K'_{\sstar} - L_{\sstar}|$
+    (well-defined provided $K'_{\sstar} \neq 1/L_{\sstar}$; since
+    $K'_{\sstar}$ is a data-dependent quantity, this condition holds
+    almost surely).
 \end{itemize}
 \end{theorem}
 
