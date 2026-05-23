@@ -68,6 +68,32 @@ $\Sper = 12$ seasons, this requires $T \gtrsim 360$--$480$
 months (30--40 years), which may not be available in
 all applications.
 
+\paragraph{Data frequency and the quarterly-data challenge.}
+The minimum-stratum-size requirement interacts directly with
+data frequency and structural stability.
+For \emph{monthly} data ($\Sper = 12$), the threshold
+$T_s \gtrsim 30$ translates to $T \gtrsim 360$ months
+(30 years) --- achievable for standard macroeconomic series
+such as industrial production or price indices.
+For \emph{quarterly} data ($\Sper = 4$), the same $T_s$
+threshold requires only $T \gtrsim 120$ quarters, also
+30 years, but the assumption of structural stability over
+three decades is considerably harder to justify for
+quarterly aggregates such as GDP: the 2008--09 financial
+crisis and the 2020 COVID recession both constitute
+substantial regime shifts that can invalidate a calibration
+buffer spanning that horizon.
+The practical implication is that \texttt{EnbPI-S} shines
+most naturally on \emph{monthly or higher-frequency} data,
+where (i) T_s large enough is reached within a single
+economic cycle, (ii) seasonal heteroskedasticity is typically
+more pronounced (harvest and weather effects operate at the
+monthly scale), and (iii) structural breaks are less likely to
+contaminate the entire calibration window.
+For purely quarterly series, practitioners may prefer to
+reduce $\Sper$ by grouping adjacent quarters into broader
+``seasons'' or to use a shorter rolling-window calibration.
+
 \paragraph{Fixed seasonal period.}
 The current framework assumes a known, fixed seasonal period
 $\Sper$.  In practice, the relevant cycle may be quarterly

@@ -2,8 +2,6 @@
 %% references.bib
 %% EnbPI for Seasonal Time Series
 %%
-%% IMPORTANT: entries marked [VERIFY] need DOI / volume
-%% confirmation before submission.
 %% ============================================================
 
 %% ---- Core conformal prediction papers ----
@@ -31,12 +29,12 @@
   url       = {https://proceedings.mlr.press/v202/xu23r.html}
 }
 
-@article{dewolf2023conditional,
-  author  = {Dewolf, Nicolas and De Baets, Bernard and Waegeman, Willem},
-  title   = {Conditional Validity of Heteroskedastic Conformal Regression},
-  journal = {arXiv preprint arXiv:2309.08313},
-  year    = {2023},
-  note    = {[VERIFY: check journal publication status]}
+@misc{dewolf2023conditional,
+  author        = {Dewolf, Nicolas and De Baets, Bernard and Waegeman, Willem},
+  title         = {Conditional Validity of Heteroskedastic Conformal Regression},
+  year          = {2023},
+  howpublished  = {Preprint, arXiv:2309.08313},
+  url           = {https://arxiv.org/abs/2309.08313}
 }
 
 @article{sousa2024general,
@@ -220,12 +218,13 @@
   year      = {2012}
 }
 
-@article{ghysels1994unit,
-  author  = {Ghysels, Eric and Osborn, Denise R.},
-  title   = {The Econometric Analysis of Seasonal Time Series},
-  journal = {Cambridge University Press},
-  year    = {2001},
-  note    = {[VERIFY: check full bibliographic details]}
+@book{ghysels2001seasonal,
+  author    = {Ghysels, Eric and Osborn, Denise R.},
+  title     = {The Econometric Analysis of Seasonal Time Series},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  year      = {2001},
+  isbn      = {978-0-521-56588-5}
 }
 
 %% ---- Neural network / ML predictors (used as baselines) ----
@@ -292,13 +291,14 @@
 
 %% ---- Mondrian (stratified) conformal prediction ----
 %% The term "Mondrian conformal prediction" was introduced in:
-@incollection{vovk2005mondrian,
+@book{vovk2005mondrian,
   author    = {Vovk, Vladimir and Gammerman, Alexander and Shafer, Glenn},
   title     = {Algorithmic Learning in a Random World},
   publisher = {Springer},
   address   = {New York},
   year      = {2005},
-  note      = {Mondrian CP introduced in Chapter 4.}
+  isbn      = {978-0-387-00152-4},
+  note      = {Mondrian conformal prediction introduced in Chapter~4.}
 }
 
 %% ---- Inflation forecasting ---
