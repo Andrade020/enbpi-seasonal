@@ -84,12 +84,15 @@ crisis and the 2020 COVID recession both constitute
 substantial regime shifts that can invalidate a calibration
 buffer spanning that horizon.
 The practical implication is that \texttt{EnbPI-S} shines
-most naturally on \emph{monthly or higher-frequency} data,
-where (i) T_s large enough is reached within a single
-economic cycle, (ii) seasonal heteroskedasticity is typically
-more pronounced (harvest and weather effects operate at the
-monthly scale), and (iii) structural breaks are less likely to
-contaminate the entire calibration window.
+most naturally on \emph{monthly or higher-frequency} data:
+\begin{itemize}[nosep]
+  \item[(i)]   $T_s$ large enough is reached within a single economic cycle;
+  \item[(ii)]  seasonal het\-ero\-sked\-as\-tic\-ity is typically more
+               pronounced (harvest and weather effects operate at the monthly
+               scale); and
+  \item[(iii)] structural breaks are less likely to contaminate the entire
+               calibration window.
+\end{itemize}
 For purely quarterly series, practitioners may prefer to
 reduce $\Sper$ by grouping adjacent quarters into broader
 ``seasons'' or to use a shorter rolling-window calibration.

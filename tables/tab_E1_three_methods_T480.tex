@@ -1,9 +1,11 @@
 \begin{table}[ht]
 \centering
+\small
 \caption{Per-season empirical coverage ($90\%$ nominal) for three methods.
 $T=480$, $\alpha=0.10$, $S=12$, $n_{\mathrm{rep}}=200$.}
 \label{tab:e1_three_methods_T480}
-\begin{tabular}{l ccc ccc}
+{\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l ccc @{\hspace{0.8em}} ccc}
 \toprule
  & \multicolumn{3}{c}{Coverage} & \multicolumn{3}{c}{Width} \\
 \cmidrule(lr){2-4} \cmidrule(lr){5-7}
@@ -23,5 +25,5 @@ Nov & \textbf{0.857} & 0.944 & 0.832 & 8.06 & 6.39 & \textit{4.20} \\
 Dec & \textbf{0.883} & 0.938 & 0.833 & 8.06 & 6.39 & \textit{4.19} \\
 \bottomrule
 \multicolumn{7}{l}{\footnotesize Bold coverage = closest to $90\%$ nominal; italic width = narrowest.  * = high-volatility months ($\sigma_{\mathrm{high}}=2$).} \\
-\end{tabular}
+\end{tabular}}
 \end{table}
