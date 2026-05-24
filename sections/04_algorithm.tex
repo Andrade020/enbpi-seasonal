@@ -189,7 +189,7 @@ As in EnbPI, \texttt{EnbPI-S} requires no data splitting: all
 $T$ training observations are used to fit the $B$ bootstrap
 models, and all $T$ LOO residuals are used to populate the $\Sper$
 stratified buffers.  This stands in contrast to Mondrian CP for
-i.i.d.\ data \citep{vovk2005mondrian,dewolf2023conditional},
+i.i.d.\ data \citep{vovk2005mondrian,dewolf2025conditional},
 where the calibration set must be divided among the $\Sper$ classes,
 reducing the effective calibration size to $T/\Sper$ per class.
 In \texttt{EnbPI-S}, the training set is shared across seasons via
@@ -244,7 +244,7 @@ are compatible and can in principle be combined
 (see Section~\ref{sec:conclusion}).
 
 \paragraph{Relation to normalised CP.}
-\citet{dewolf2023conditional} show that, for i.i.d.\ data from a
+\citet{dewolf2025conditional} show that, for i.i.d.\ data from a
 location-scale family, normalised CP (which divides each residual
 by an estimate of $\sigma(x)$) achieves conditional validity
 without Mondrian stratification.  In our setting,
