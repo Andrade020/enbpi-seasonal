@@ -95,7 +95,7 @@ if __name__ == '__main__':
         out_path=os.path.join(figs, 'fig_empirical_exports_width_time.pdf'),
         title='Interval width over time — Brazilian export growth (2015–2024)',
         ylabel='Width (%)',
-        highlight_months=[2, 3],   # Feb-Mar: harvest-onset uncertainty
+        highlight_months=[3, 4, 5],   # Mar-May: harvest-export ramp-up (peak April)
     )
 
     # IPCA food figure (optional)

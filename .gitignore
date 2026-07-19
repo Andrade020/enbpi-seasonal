@@ -41,3 +41,6 @@ Thumbs.db
 
 # Claude Code settings (local only)
 .claude/
+
+# Obsidian study vault (personal defense prep, not part of the paper)
+vault_defesa/

@@ -1,7 +1,7 @@
 % ============================================================
 % ABSTRACT
 % ============================================================
-We study the coverage properties of the Ensemble batch
+We study the coverage properties of the Ensemble Batch
 Prediction Intervals (EnbPI) algorithm of \citet{xu2023conformal}
 under seasonal heteroskedasticity (the empirically common
 setting in which the variance of forecast errors varies
@@ -37,8 +37,9 @@ empirical quantiles, raising high-volatility coverage to $79\%$.
 bias: high-volatility coverage rises to $84\%$, and the
 cross-season coverage spread collapses from $0.24$ (SARIMA)
 to $0.02$, a twelve-fold reduction.
-An application to monthly Brazilian consumer inflation
-(IPCA, 1995--2024) illustrates that \texttt{EnbPI-S}
+An application to the food-at-home component of the
+Brazilian consumer price index (IPCA; BCB series 1635,
+1995--2024) illustrates that \texttt{EnbPI-S}
 correctly assigns wider intervals to high-uncertainty
 months and narrower intervals to predictable months,
 while the pooled method applies a uniform bandwidth.
@@ -47,12 +48,13 @@ A second application to Brazilian monthly export growth
 regime: both methods achieve coverage within $3.3$
 percentage points of nominal, and \texttt{EnbPI-S}
 produces a factor-of-$2.3$ width variation across seasons,
-with the widest interval in February (soybean harvest-onset)
-and the narrowest in July.
+with the widest interval in April (the peak of the soybean
+harvest-export season) and the narrowest in September.
 
 \bigskip
 
 \noindent\textbf{Resumo:}
+\begin{otherlanguage}{brazilian}%
 Estudamos as propriedades de cobertura do algoritmo
 EnbPI \citep{xu2023conformal} sob heteroscedasticidade
 sazonal, cenário em que a variância dos erros de previsão
@@ -79,7 +81,7 @@ Uma aplicação ao componente de Alimentação no domicílio do
 IPCA (BCB série 1635, 1995--2024) ilustra que
 \texttt{EnbPI-S} produz intervalos mais largos nos meses
 de ajuste de safra (maio--junho) e mais estreitos nos
-meses estáveis (fevereiro, outubro), enquanto o método
+meses estáveis (fevereiro, abril), enquanto o método
 conjunto aplica uma largura uniforme ao longo do ano.
 Uma segunda aplicação ao crescimento das exportações
 brasileiras ($T_s = 35$, série BCB 1402, 1979--2024)
@@ -87,5 +89,7 @@ confirma o método no regime de amostra adequada: ambos
 os métodos atingem cobertura dentro de $3{,}3$ pontos
 percentuais do nominal, e o \texttt{EnbPI-S} produz
 uma variação de $2{,}3$ vezes na largura dos intervalos
-ao longo do ano, com o intervalo mais largo em fevereiro
-(início da safra de soja) e o mais estreito em julho.
+ao longo do ano, com o intervalo mais largo em abril
+(pico do escoamento da safra de soja) e o mais estreito
+em setembro.
+\end{otherlanguage}

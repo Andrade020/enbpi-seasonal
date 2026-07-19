@@ -1,7 +1,7 @@
 % ============================================================
 % SECTION 3 — COVERAGE GAP OF POOLED EnbPI
 % ============================================================
-\section{Coverage Gap of Pooled \texttt{EnbPI} Under Seasonal
+\section{Coverage Gap of Pooled EnbPI Under Seasonal
          Heteroskedasticity}
 \label{sec:pooled_gap}
 
@@ -91,17 +91,25 @@ Then, for any $T \in \N$, $\alpha \in (0,1)$, and $\beta \in [0,\alpha]$:
                \mid X_{T+1} = x_{T+1}\bigr) - (1-\alpha)
   \bigr| \notag\\
   &\quad\leq\;
-  \underbrace{12\sqrt{\frac{\log(16T)}{T}}}_{\text{(i) sampling error}}
+  \underbrace{c_0\sqrt{\frac{\log(16T)}{T}}}_{\text{(i) sampling error}}
   \;+\;
   \underbrace{4(L+1)\!\left(\deltaT^{2/3} + \deltaT\right)}_{\text{(ii) estimation error}}
   \;+\;
-  \underbrace{2\,\bsstar}_{\text{(iii) seasonal bias}}.
+  \underbrace{2\,\bsstar}_{\text{(iii) seasonal bias}},
 \end{align}
 %
+where $c_0 > 0$ is an absolute constant ($c_0 = 12$ when the errors
+are i.i.d., in which case the sharp DKW inequality of
+\citealt{massart1990tight} applies; in the seasonal case
+Lemma~\ref{lem:dkw_noniid} in Appendix~\ref{app:proofs} supplies the
+required non-i.i.d.\ concentration inequality with a slightly larger
+absolute constant).
 Terms \textup{(i)} and \textup{(ii)} converge to zero as $T\to\infty$
 whenever $\deltaT \to 0$.  Term \textup{(iii)} is constant in $T$
-and satisfies $\bsstar > 0$ whenever $\sigma_{\sstar} \neq \sigma_s$
-for some $s \neq \sstar$.
+and, by Lemma~\ref{lem:bias_properties}(iii), satisfies
+$\bsstar > 0$ whenever $G$ is strictly increasing and season
+$\sstar$ has the strictly largest or smallest seasonal scale
+(in particular, for a genuinely high-volatility season).
 \end{proposition}
 
 \begin{proof}
@@ -156,46 +164,41 @@ $(L+1)\deltaT^{2/3}$.
 \emph{Term (B)}: the pooled empirical CDF $\tilde{F}_T^{\text{pool}}$
 is formed from $T$ \emph{independent} (but not identically distributed)
 observations, $T_s = T/\Sper$ from each $F_s$, with expectation
-$\bar{F}$.  Using the decomposition
-$\tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)
-= \frac{1}{\Sper}\sum_{s=1}^\Sper
-  [\tilde{F}_{T_s,s}(x) - F_s(x)]$,
-where $\tilde{F}_{T_s,s}$ is the season-$s$ empirical CDF formed
-from the $T_s$ i.i.d.\ observations in stratum $s$, we obtain:
+$\bar{F}$.  The sharp Dvoretzky--Kiefer--Wolfowitz (DKW) inequality
+of \citet{massart1990tight} applies only to i.i.d.\ samples, so it
+cannot be invoked directly here.  Instead,
+Lemma~\ref{lem:dkw_noniid} in Appendix~\ref{app:proofs} establishes,
+via symmetrisation and the bounded-differences inequality
+\citep{boucheron2013concentration}, that
 \[
   \sup_x\bigl|\tilde{F}_T^{\text{pool}}(x) - \bar{F}(x)\bigr|
   \;\leq\;
-  \max_{s}\sup_x\bigl|\tilde{F}_{T_s,s}(x) - F_s(x)\bigr|.
+  4\sqrt{\frac{\log(16T)}{T}}
 \]
-Each term on the right satisfies the DKW inequality
-\citep{massart1990tight} with $T_s$ i.i.d.\ samples.  Applying a
-union bound over $\Sper$ seasons yields a contribution of order
-$\sqrt{\log(16T_s)/T_s} = \sqrt{\Sper\log(16T/\Sper)/T}$,
-which converges to zero as $T\to\infty$ for fixed $\Sper$.
-The full proof in Appendix~\ref{app:proofs} carries out this
-argument precisely.  The key step is to apply the DKW inequality
-directly to the $T$ mutually independent (though not identically
-distributed) errors pooled across all seasons; the DKW bound
-$\Prob(\sup_x|\tilde{F}_T^{\text{pool}}(x)-\bar{F}(x)|>u)
-\leq 2e^{-2Tu^2}$ holds for any sequence of independent random
-variables \citep{massart1990tight}, not just i.i.d.\ ones,
-yielding the $T$-based term~(i) with constant $12$ as in
-\citet{xu2023conformal}.
+with probability at least $1 - (16T)^{-1}$.  The $T$-based rate of
+the i.i.d.\ case is therefore preserved; only the absolute constant
+changes, which is why term~(i) of~\eqref{eq:pooled_gap} carries the
+constant $c_0$ rather than the i.i.d.\ constant $12$.
 
 \emph{Term (C)} equals $\bsstar$ by
 Definition~\ref{def:seasonal_bias}, and is independent of $T$.
 
 Assembling the three terms via the argument of
 \citet{xu2023conformal} (Lemmas~1--2 and proof of Theorem~1
-therein, adapted to the three-step chain~\eqref{eq:triangle})
-yields~\eqref{eq:pooled_gap}.  The constants in
-terms~(i) and~(ii) carry over exactly from
-\citeauthor{xu2023conformal}'s proof.
+therein, adapted to the three-step chain~\eqref{eq:triangle},
+with the concentration input supplied by
+Lemma~\ref{lem:dkw_noniid}) yields~\eqref{eq:pooled_gap}.
+The constant in term~(ii) carries over exactly from
+\citeauthor{xu2023conformal}'s proof; the absolute constant
+$c_0$ in term~(i) results from tracking
+Lemma~\ref{lem:dkw_noniid} through that argument.
 \end{proof}
 
 \begin{remark}[Comparison with \citealt{xu2023conformal}]
 When $\sigma_s = \sigma$ for all $s$ (homoskedasticity), we have
-$F_s = F$ for all $s$, so $\bar{F} = F_{\sstar}$ and $\bsstar = 0$.
+$F_s = F$ for all $s$, so $\bar{F} = F_{\sstar}$ and $\bsstar = 0$;
+moreover the errors are then i.i.d., the sharp DKW inequality of
+\citet{massart1990tight} applies, and $c_0 = 12$.
 Proposition~\ref{prop:pooled_gap} then reduces to
 \citet[Theorem~1]{xu2023conformal} exactly, confirming that our
 framework nests theirs as a special case.
@@ -204,7 +207,7 @@ framework nests theirs as a special case.
 \begin{remark}[Relation to Mondrian conformal prediction]
 \label{rem:mondrian}
 Stratifying conformal intervals by a categorical label is known as
-\emph{Mondrian conformal prediction} \citep{vovk2005mondrian}.
+\emph{Mondrian conformal prediction} (CP) \citep{vovk2005mondrian}.
 Under exchangeability, Mondrian CP achieves exact conditional
 coverage within each stratum.  Proposition~\ref{prop:pooled_gap}
 can be viewed as quantifying the loss from \emph{not} applying
@@ -227,7 +230,8 @@ Three practical implications follow.
 
 \begin{enumerate}
 \item \textbf{Persistent undercoverage in high-volatility seasons.}
-  When $\sigma_{\sstar} > \bar{\sigma}$ (a high-volatility season),
+  When $\sigma_{\sstar}$ exceeds the remaining seasonal scales
+  (a high-volatility season),
   the pooled quantiles underestimate the true dispersion of errors
   in that season, producing intervals that are systematically too
   narrow.  The converse holds for low-volatility seasons, which
@@ -235,9 +239,21 @@ Three practical implications follow.
 
 \item \textbf{Asymptotic invalidity.}
   Even as $T \to \infty$ and terms~(i) and~(ii)
-  in~\eqref{eq:pooled_gap} vanish, the gap remains bounded below by
-  $\bsstar > 0$.  Pooled EnbPI is \emph{asymptotically invalid}
-  in the presence of genuine seasonal heteroskedasticity.
+  in~\eqref{eq:pooled_gap} vanish, the \emph{upper bound} remains
+  bounded below by $2\bsstar > 0$.  An upper bound alone does not
+  prove that the realised gap stays away from zero; however, the
+  limiting-coverage computation in Step~6 of
+  Appendix~\ref{app:proofs:prop_pooled}
+  (equation~\eqref{eq:cov_approx}) shows that pooled coverage
+  converges to
+  $F_{\sstar}(\bar{F}^{-1}(1-\alpha+\hat\beta))
+   - F_{\sstar}(\bar{F}^{-1}(\hat\beta))$,
+  which differs from $1-\alpha$ for generic
+  $(G, \sigma_1,\ldots,\sigma_\Sper, \alpha)$ whenever
+  $\bsstar > 0$, and the simulations of
+  Section~\ref{sec:simulations} confirm a persistent per-season
+  gap.  In this sense, pooled EnbPI is \emph{asymptotically
+  invalid} in the presence of genuine seasonal heteroskedasticity.
 
 \item \textbf{Estimability of the bias.}
   The seasonal bias $\bsstar$ can be estimated consistently from data

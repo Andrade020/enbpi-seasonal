@@ -13,7 +13,7 @@
 % --- Encoding & language ---
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage[brazilian,english]{babel}
 
 % --- Math ---
 \usepackage{amsmath}
@@ -44,6 +44,9 @@
 \usepackage[round,authoryear]{natbib}
 \bibliographystyle{apalike}
 
+% --- Colours (before hyperref) ---
+\usepackage{xcolor}
+
 % --- Hyperlinks (load last among these) ---
 \usepackage[colorlinks=true,
             linkcolor=blue!60!black,
@@ -59,7 +62,6 @@
 \newcommand{\xmark}{\ding{55}}
 
 % --- Internal comments (remove before submission) ---
-\usepackage{xcolor}
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 \newcommand{\note}[1]{\textcolor{blue!70!black}{\textbf{[NOTE: #1]}}}
 
@@ -90,6 +92,7 @@
 \newcommand{\calT}{\mathcal{T}}       % index set T_s for stratum s
 \newcommand{\calA}{\mathcal{A}}       % prediction algorithm
 \newcommand{\calF}{\mathcal{F}}       % filtration
+\newcommand{\calH}{\mathcal{H}}       % set of high-volatility seasons
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\mathbb{R}}
 

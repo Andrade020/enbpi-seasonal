@@ -24,11 +24,14 @@ optimisation of the original algorithm.
 Theoretically, we proved that the per-season coverage gap of
 \texttt{EnbPI-S} decays at rate $O(\sqrt{\log T_s / T_s})$,
 where $T_s = T/\Sper$ is the per-stratum training size, and
-derived a finite-sample dominance condition linking the
-benefit of stratification to the size of $b_{s^*}$ and the
-training sample length (Proposition~\ref{prop:strat_dominance}).
-A companion bound characterises the interval width reduction
-achievable in low-volatility seasons (Theorem~\ref{thm:width_bound}).
+derived an asymptotic dominance result
+(Proposition~\ref{prop:strat_dominance}) together with a
+finite-sample dominance condition~\eqref{eq:dominance_condition}
+linking the benefit of stratification to the size of $b_{s^*}$
+and the training sample length.
+A companion bound shows that the \texttt{EnbPI-S} interval
+converges to the season-specific oracle interval
+(Theorem~\ref{thm:width_bound}).
 
 Empirically, the simulation study confirmed that
 \texttt{EnbPI-S} produces more uniform coverage across seasons
@@ -47,8 +50,9 @@ BCB series 1402) confirmed the method in the
 adequate-sample regime: both methods achieved coverage
 within $3.3$ percentage points of nominal, and
 \texttt{EnbPI-S} produced a factor-of-$2.3$ width variation,
-correctly assigning a $13.8\%$ interval to February
-(soybean harvest-onset) and a $6.0\%$ interval to July,
+correctly assigning a $13.8\%$ interval to April
+(the peak of the soybean harvest-export season) and a $6.0\%$
+interval to September,
 while the pooled baseline applied a constant $\approx 10.2\%$
 throughout.
 
@@ -108,10 +112,11 @@ selection of $\Sper$ is left to the practitioner.
 \paragraph{Structural breaks.}
 The sliding-window update adapts to slow drift in the
 seasonal volatility structure, but it is not designed to
-handle abrupt structural breaks.  The undercoverage observed
-in the IPCA empirical application during 2020--22 reflects
-such a break: the COVID-era inflation dynamics lie outside
-the support of the training distribution.  Robust
+handle abrupt structural breaks.  Part of the coverage
+shortfall in the food-IPCA application plausibly reflects
+such a break: COVID-era (2020--22) inflation dynamics lie
+partly outside the support of the 1995--2014 training
+distribution.  Robust
 recalibration after detected breaks is an open problem.
 
 %------------------------------------------------------------
@@ -152,8 +157,8 @@ and merits further study.
 \paragraph{Beyond monthly seasonality.}
 The framework applies directly to quarterly, daily, or intraday
 seasonality by adjusting $\Sper$.  For high-frequency data
-with large $\Sper$ (e.g.\ hourly electricity demand with
-$\Sper = 8736$), the per-stratum sample sizes would be
+with large $\Sper$ (e.g.\ hourly electricity demand with an
+annual cycle, $\Sper = 8760$), the per-stratum sample sizes would be
 very small and alternative grouping strategies would be
 necessary.  The theoretical analysis extends to this regime
 with minor adjustments to the DKW-based argument in

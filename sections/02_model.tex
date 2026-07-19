@@ -121,7 +121,7 @@ ensemble predictor is
 \[
   \hat{f}_{-i}^{\,\phi}(x_i)
   \;=\;
-  \phi\!\bigl(\hat{f}^{\,b}(x_i):\, i \notin S_b\bigr),
+  \phi\!\bigl(\hat{f}^{\,b}(x_i):\, b \text{ s.t. } i \notin S_b\bigr),
 \]
 where $\phi$ is an aggregation function (e.g.\ sample mean).
 The LOO residual at training point $i$ is
@@ -323,6 +323,14 @@ Under Assumption~\ref{ass:seasonal}:
   \item[\textup{(ii)}]
     $\bsstar$ does not depend on $T$; it is a fixed property
     of the data-generating process.
+
+  \item[\textup{(iii)}]
+    If $G$ is strictly increasing and season $\sstar$ has the
+    strictly largest or the strictly smallest scale (that is,
+    $\sigma_{\sstar} = \max_s \sigma_s$ or
+    $\sigma_{\sstar} = \min_s \sigma_s$, with
+    $\sigma_s \neq \sigma_{\sstar}$ for at least one $s$),
+    then $\bsstar > 0$.
 \end{enumerate}
 \end{lemma}
 
@@ -331,6 +339,15 @@ Under Assumption~\ref{ass:seasonal}:
   every $s$, so $F_{\sstar} = \bar{F}$ pointwise and $\bsstar = 0$.
   Part~(ii) follows directly from Definition~\ref{def:seasonal_bias},
   since neither $F_{\sstar}$ nor $\bar{F}$ depend on the sample size $T$.
+  Part~(iii): suppose $\sigma_{\sstar} = \max_s \sigma_s$ and
+  $\sigma_{s'} < \sigma_{\sstar}$ for some $s'$.  Fix any $x > 0$.
+  Then $x/\sigma_{\sstar} \leq x/\sigma_s$ for every $s$, with strict
+  inequality for $s = s'$; since $G$ is strictly increasing,
+  $G(x/\sigma_{\sstar}) \leq G(x/\sigma_s)$ with strict inequality for
+  $s'$, whence
+  $\bar{F}(x) > G(x/\sigma_{\sstar}) = F_{\sstar}(x)$ and therefore
+  $\bsstar \geq \bar{F}(x) - F_{\sstar}(x) > 0$.  The case
+  $\sigma_{\sstar} = \min_s \sigma_s$ is symmetric.
 \end{proof}
 
 Part~(ii) of Lemma~\ref{lem:bias_properties} is the key observation:

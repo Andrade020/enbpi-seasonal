@@ -19,7 +19,7 @@ December 2024, enabling a direct cross-application
 comparison.
 
 %------------------------------------------------------------
-\subsection{Food-at-Home IPCA ($T_s = 20$)}
+\subsection{Food-at-Home IPCA (\texorpdfstring{$T_s = 20$}{Ts = 20})}
 \label{sec:empirical:food}
 %------------------------------------------------------------
 
@@ -30,14 +30,16 @@ heteroskedastic monthly time series that provides a
 cleaner test case than headline IPCA.
 
 %------------------------------------------------------------
-\subsection{Data and Setting}
+\subsubsection{Data and Setting}
 \label{sec:empirical:data}
 %------------------------------------------------------------
 
 \paragraph{Data source.}
 Monthly percentage changes in the food-at-home component of
-IPCA are downloaded from the Banco Central do Brasil open-data
-API (BCB SGS series 1635).  The series is available from
+the IPCA (compiled by IBGE; \citealp{ibge2024ipca}) are
+downloaded from the Banco Central do Brasil (BCB) open-data
+API \citep{bcb2024sgs}, Sistema Gerenciador de S\'eries (SGS)
+series 1635.  The series is available from
 January 1994 at monthly frequency.  We use observations
 from January 1995 onwards.
 
@@ -46,7 +48,7 @@ The food component exhibits substantially stronger seasonal
 heteroskedasticity than headline IPCA for two reasons.
 First, agricultural prices follow harvest cycles, with
 residual volatility systematically higher in the
-preharvest and post-harvest adjustment months
+pre-harvest and post-harvest adjustment months
 (May--June in Brazil).
 Second, the food component is less contaminated by
 administered-price shocks (fuel, electricity) that
@@ -60,7 +62,10 @@ We use:
 \begin{itemize}[nosep]
   \item \emph{Training}: January 1995 -- December 2014
     ($T = 240$ months, 20 years, $T_s = 20$ observations
-    per season).
+    per season).\footnote{The $p = 13$ autoregressive lags
+    consume the first year of the sample, so each seasonal
+    calibration buffer effectively holds $T_s - 1 \approx 19$
+    LOO residuals; we quote the nominal $T_s$ throughout.}
   \item \emph{Test}: January 2015 -- December 2024
     ($T_1 = 120$ months, $n_s = 10$ observations per season).
 \end{itemize}
@@ -71,7 +76,7 @@ are identical to the simulation setup:
 $p = 13$ AR lags, $B = 50$ Ridge models, $\alpha = 0.10$.
 
 %------------------------------------------------------------
-\subsection{Empirical Results}
+\subsubsection{Results}
 \label{sec:empirical:results}
 %------------------------------------------------------------
 
@@ -94,7 +99,7 @@ in Brazil), a factor-of-$1.78$ variation.
 The months with the widest \texttt{EnbPI-S} intervals
 (June, May, November) correspond to periods of
 greater harvest-price uncertainty; those with the narrowest
-intervals (February, October, January)
+intervals (February, April, October)
 correspond to more predictable stretches of the food-price cycle.
 
 Figure~\ref{fig:empirical_food_width_time} illustrates this
@@ -159,7 +164,7 @@ cannot make this distinction and applies a uniform
 bandwidth throughout the year.
 
 %------------------------------------------------------------
-\subsection{Connection to Simulation Findings}
+\subsubsection{Connection to Simulation Findings}
 \label{sec:empirical:connection}
 %------------------------------------------------------------
 
@@ -167,40 +172,47 @@ The empirical results connect to the simulation study in
 two concrete ways.
 
 First, the ratio of maximum to minimum \texttt{EnbPI-S}
-interval width (June to February: $1.86/1.05 = 1.78$)
-is in the range predicted by Theorem~\ref{thm:width_bound}
-for moderate seasonal heteroskedasticity.  The pooled
+interval width (June to February: $1.864/1.046 \approx 1.78$)
+reflects the moderate seasonal heteroskedasticity of Brazilian
+food prices; Theorem~\ref{thm:width_bound} guarantees that, as
+$T_s$ grows, each seasonal width converges to the corresponding
+season-specific oracle width.  The pooled
 method's constant width of $\approx 1.82$ p.p.\ lies
-between these extremes, confirming the bias identified
+between these extremes, consistent with the bias identified
 in Proposition~\ref{prop:pooled_gap}: pooled calibration
 overcovers the stable months and undercovers the
 volatile months.
 
 Second, the coverage shortfall relative to the $90\%$
-nominal is precisely the finite-sample penalty at
-$T_s = 20$ documented in Experiment E2.
+nominal is the finite-sample penalty at
+$T_s = 20$ documented in Experiment E2 (simulated gap of
+$11.5$ pp for \texttt{EnbPI-S}, against an empirical gap of
+$10.8$ pp here).
 Section~\ref{sec:empirical:exports} below provides an
 application with $T_s = 35$, confirming that the coverage
 gap shrinks substantially as the stratum size increases.
 
 %------------------------------------------------------------
-\subsection{Brazilian Monthly Export Growth ($T_s = 35$)}
+\subsection{Brazilian Monthly Export Growth (\texorpdfstring{$T_s = 35$}{Ts = 35})}
 \label{sec:empirical:exports}
 %------------------------------------------------------------
 
 \paragraph{Data and setting.}
 Monthly values of Brazilian total exports
-(BCB SGS series 1402, in US\$ millions) are available
+(BCB SGS series 1402, in US\$ millions; \citealp{bcb2024sgs})
+are available
 from February 1979.  We transform to log-returns:
-$Y_t = 100 \cdot \log(X_t / X_{t-1})$, yielding a
+$Y_t = 100 \cdot \log(V_t / V_{t-1})$, where $V_t$ denotes
+the monthly export value, yielding a
 stationary series of monthly export growth rates
 (in per cent).
 Because the series is denominated in US dollars it is
 unaffected by Brazilian hyperinflation, enabling a
-training window of 35 years:
+training window of almost 36 years:
 \begin{itemize}[nosep]
   \item \emph{Training}: March 1979 -- December 2014
-    ($T = 430$, $T_s = 35$ per season).
+    ($T = 430$; each calendar month contributes 35 or 36
+    observations, and we quote $T_s = 35$, the minimum).
   \item \emph{Test}: January 2015 -- December 2024
     ($T_1 = 120$, the same window as Section~\ref{sec:empirical:food}).
 \end{itemize}
@@ -211,14 +223,16 @@ identical to the previous application.
 Brazilian export flows are dominated by agricultural
 commodities with pronounced harvest cycles.
 Soybean (the largest export by value) is planted in
-October--January and harvested in February--May;
+October--January, harvested in February--May, and shipped
+in bulk from March through June;
 coffee and beef follow different but equally seasonal
 rhythms.
 These cycles produce clear month-to-month differences
-in forecast-error variance: February sits at the
-peak of harvest uncertainty (the new crop is still
-ripening), while July -- mid-winter, mid-calendar --
-is the most predictable month.
+in forecast-error variance: April sits at the peak of the
+harvest-export ramp-up (the size of the new crop and the
+pace of its shipment are still being revealed), while
+September, past the export peak and before the next
+planting signals arrive, is the most predictable month.
 This natural experiment provides a strong test for
 seasonal interval calibration.
 
@@ -235,27 +249,30 @@ $93.3\%$ overall coverage (overcovering by $3.3$
 percentage points) and \texttt{EnbPI-S} achieves
 $86.7\%$ (undercovering by $3.3$ percentage points).
 Both methods are equidistant from the nominal,
-a direct validation of Experiment E2's prediction that
-the coverage gap shrinks from $8$--$9$ percentage points
-at $T_s = 20$ to roughly $3$ percentage points at $T_s = 35$.
+consistent with Experiment E2's prediction that the coverage
+gap shrinks as the stratum size grows (simulated
+\texttt{EnbPI-S} gaps of $11.5$, $7.8$, and $5.5$ percentage
+points at $T_s = 20$, $30$, and $50$); the empirical gap of
+$3.3$ percentage points at $T_s = 35$ is in fact smaller than
+the simulated trajectory suggests.
 
 The width-adaptation finding is even more pronounced
 than in the food-IPCA case.
 The pooled method's intervals are essentially constant
 at $\approx 10.2\%$ across all twelve months (ratio $1.01$).
 \texttt{EnbPI-S} produces intervals ranging from
-$6.0\%$ in July (the most predictable month) to
-$13.8\%$ in February (the harvest-onset month),
+$6.0\%$ in September (the most predictable month) to
+$13.8\%$ in April (the peak of the harvest-export season),
 a factor-of-$2.3$ variation that directly
 reflects the seasonal structure of forecast uncertainty.
 
-The most striking individual-month result is February:
+The most striking individual-month result is April:
 pooled coverage is $70\%$ ($7/10$ test observations
 covered), while \texttt{EnbPI-S} achieves $90\%$
 ($9/10$ covered) by correctly assigning a wide
 interval ($13.8\%$) that accommodates the extreme
-export-growth swings associated with the new
-soybean harvest.
+export-growth swings associated with the shipment of
+the new soybean crop.
 The pooled interval ($10.2\%$) is too narrow for this
 month, causing systematic undercoverage precisely when
 forecast risk is highest.
@@ -263,11 +280,11 @@ forecast risk is highest.
 Figure~\ref{fig:empirical_exports_width_time} illustrates
 this contrast over the full test period: the Pooled band (red)
 is nearly flat at $\approx 10.2\%$ throughout, while the
-\texttt{EnbPI-S} band (blue) peaks in Q1 (harvest-onset) and
-troughs in Q3 (mid-year stable period).
+\texttt{EnbPI-S} band (blue) peaks in the second quarter
+(harvest-export ramp-up) and troughs in the third quarter.
 The bottom panel confirms that \texttt{EnbPI-S} correctly
-allocates maximum uncertainty to February--March and minimum
-uncertainty to July.
+allocates maximum uncertainty to March--May (peaking in April)
+and minimum uncertainty to September.
 
 \begin{figure}[ht]
   \centering
@@ -277,11 +294,12 @@ uncertainty to July.
            \textit{Top panel}: interval width for each month of the
            test period.  The Pooled method (red) is nearly flat at
            $\approx 10.2\%$; \texttt{EnbPI-S} (blue) peaks at
-           $13.8\%$ in February (soybean harvest-onset) and troughs
-           at $6.0\%$ in July, a ratio of $2.3\times$.
+           $13.8\%$ in April (peak of the soybean harvest-export
+           season) and troughs
+           at $6.0\%$ in September, a ratio of $2.3\times$.
            \textit{Bottom panel}: mean interval width by calendar month.
-           Gold shading marks February--March (harvest-onset uncertainty
-           months).}
+           Gold shading marks March--May (harvest-export
+           uncertainty months).}
   \label{fig:empirical_exports_width_time}
 \end{figure}
 
@@ -303,9 +321,9 @@ two applications side by side.
 Application & Train & Test &
   Pooled & EnbPI-S & Pooled & EnbPI-S \\
 \midrule
-IPCA food (sec.~\ref{sec:empirical:food})
-  & 20 & 10 & 4.2\% & 6.8\% & 1.01 & 1.78 \\
-Export growth (sec.~\ref{sec:empirical:exports})
+IPCA food (Sec.~\ref{sec:empirical:food})
+  & 20 & 10 & 4.2\% & 10.8\% & 1.01 & 1.78 \\
+Export growth (Sec.~\ref{sec:empirical:exports})
   & 35 & 10 & 3.3\% & 3.3\% & 1.01 & 2.30 \\
 \bottomrule
 \multicolumn{7}{l}{\footnotesize Width ratio = (max season width) /
@@ -316,8 +334,9 @@ Export growth (sec.~\ref{sec:empirical:exports})
 The pattern across applications is consistent with
 the simulation findings.
 As $T_s$ increases from 20 to 35, \texttt{EnbPI-S}'s
-coverage gap falls from $6.8\%$ to $3.3\%$ (halved),
-matching Experiment E2's prediction.
+coverage gap falls from $10.8\%$ to $3.3\%$ (a reduction of
+more than two-thirds), matching Experiment E2's qualitative
+prediction.
 In both applications the pooled method applies a
 nearly constant interval width, while \texttt{EnbPI-S}
 correctly identifies and adapts to the seasonal

@@ -54,13 +54,25 @@ The default base learner $\calA$ is Ridge regression
 ($\ell_2$-penalty $= 1.0$); Experiment E5 also uses a Random
 Forest ($B_{\mathrm{tree}} = 30$ trees, maximum depth 6).
 Both methods use $B = 50$ bootstrap models, batch size
-$s_0 = 1$, and significance level $\alpha = 0.10$.
+$s_0 = 1$, and significance level $\alpha = 0.10$.\footnote{Two
+standard implementation simplifications are used in the
+replication code: the test-point forecast is the simple average
+of the $B$ bootstrap models rather than the $\phi$-aggregation
+of the $T$ LOO predictors (numerically indistinguishable for
+$\phi$ = mean), and residuals appended by the sliding-window
+update are computed from the full ensemble.  Experiment E5's
+Random Forest uses $100$ Monte Carlo replications (all other
+runs use $n_{\mathrm{rep}} = 200$).  If a SARIMA fit fails to
+converge, that replication is scored as non-covered, which, if
+anything, penalises the SARIMA benchmark.  All seeds are fixed
+in the replication archive.}
 
 \paragraph{Methods compared.}
 Experiments E1--E4 compare three methods:
 \begin{enumerate}[label=(\roman*)]
   \item \emph{SARIMA-Gaussian}: a seasonal ARIMA$(1,0,0)(1,0,0)_{12}$
-    model fitted by Gaussian MLE, with symmetric prediction intervals
+    model fitted by Gaussian maximum likelihood (MLE), with
+    symmetric prediction intervals
     $\hat{f}_t \pm z_{1-\alpha/2}\,\hat{\sigma}$,
     where $\hat{\sigma}$ is the in-sample residual standard deviation.
     This is the standard parametric baseline used in applied
@@ -101,19 +113,24 @@ available in the replication archive (\texttt{code/simulation.py}).
 Table~\ref{tab:e1_three_methods_T480} reports per-season empirical
 coverage and average width for all three methods at
 $T = 480$ (40 years) and $\sigma_{\mathrm{high}} = 2$.
-The two-method table (Pooled vs \texttt{EnbPI-S} only) is
-reproduced in Appendix~\ref{app:additional}
-(Table~\ref{tab:e1_coverage_T480}) for reference.
+The two-method comparison (Pooled vs \texttt{EnbPI-S} only) is
+repeated in Appendix~\ref{app:additional}
+(Table~\ref{tab:e1_coverage_T480}) as an independent Monte Carlo
+replication run with different seeds, so its entries differ from
+those below in the third decimal place.
 
 \input{tables/tab_E1_three_methods_T480}
 
 \paragraph{Motivating the benchmark.}
 SARIMA$(1,0,0)(1,0,0)_{12}$ is the natural parametric competitor:
-it is correctly specified for the seasonal mean structure of
-the DGP~\eqref{eq:dgp_sim}, so any failure in its prediction
-intervals is attributable entirely to distributional or variance
-misspecification, not to a poor point forecast.
-This makes SARIMA-Gaussian an informative strawman that isolates
+its mean structure closely approximates that of the
+DGP~\eqref{eq:dgp_sim} (the multiplicative seasonal AR polynomial
+implies an additional cross term $-\phi\Phi\,Y_{t-13} \approx
+-0.18\,Y_{t-13}$ that is absent from the additive DGP, but the
+two specifications otherwise coincide), so any material failure
+in its prediction intervals is attributable to distributional or
+variance misspecification, not to a poor point forecast.
+This makes SARIMA-Gaussian an informative benchmark that isolates
 the two ingredients our paper addresses:
 non-Gaussianity of the error distribution ($t_3$ vs $\mathcal{N}$)
 and seasonal heteroskedasticity of its variance ($\sigma_s \neq
@@ -123,7 +140,7 @@ and seasonal heteroskedasticity of its variance ($\sigma_s \neq
 The pooled method exhibits severe seasonal bias: its coverage
 ranges from approximately $0.78$ for the high-volatility months
 (January, February, August, September, marked with *) to $0.96$
-for the low-volatility months — a range of roughly
+for the low-volatility months, a range of roughly
 $0.18$ probability units.  The stratified method reduces this
 spread dramatically: all twelve months lie within a
 $0.02$-unit band, between approximately $0.83$ and $0.85$.
@@ -151,9 +168,10 @@ The SARIMA benchmark reveals why a standard parametric approach
 is doubly inadequate.  First, Gaussian prediction intervals
 underestimate the heavy tails of the $t_3$ error distribution.
 Second, the Gaussian MLE estimates a single $\hat{\sigma}$
-from the pooled residuals, which is too large for
-low-volatility months (causing overcoverage $\approx 0.87$)
-and too small for high-volatility months
+from the pooled residuals, which is relatively too large for
+the low-volatility months (their coverage, $\approx 0.87$, is
+the highest SARIMA attains, though still below nominal owing to
+the Gaussian tails) and far too small for high-volatility months
 (causing severe undercoverage: mean $0.699$, worst $0.662$
 for September).
 The resulting coverage spread ($0.243$ probability units) is
@@ -166,9 +184,9 @@ while \texttt{EnbPI-S} achieves $84.4\%$.
 The comparison isolates the two contributions of this paper:
 Pooled EnbPI corrects SARIMA's distributional assumption
 through empirical quantiles, improving high-volatility
-coverage from $0.699$ to $0.786$ ($+8.7$ pp);
+coverage from $0.699$ to $0.787$ ($+8.9$ pp);
 \texttt{EnbPI-S} further corrects the seasonal calibration
-bias, raising it to $0.842$ ($+5.6$ pp more) and
+bias, raising it to $0.842$ ($+5.5$ pp more) and
 collapsing the coverage spread to $0.019$.
 
 \paragraph{Coverage accuracy for high-volatility seasons.}
@@ -185,8 +203,9 @@ SARIMA $0.662$, Pooled $0.776$, \texttt{EnbPI-S} $0.844$.
 From a risk-management perspective the relevant quantity is the
 \emph{minimum} per-season coverage.
 SARIMA achieves a worst-case coverage of $0.662$
-(September); Pooled EnbPI $0.776$; \texttt{EnbPI-S}
-raises this floor to $0.844$.
+(September); Pooled EnbPI $0.776$ (September); \texttt{EnbPI-S}
+raises this floor to $0.829$ (January; its September coverage
+is $0.844$).
 The ordering is unambiguous: \texttt{EnbPI-S} provides the
 strongest guarantee for the seasons that matter most.
 
@@ -222,11 +241,12 @@ while pooled EnbPI achieves $\approx 0.84$.  This is a genuine
 finite-sample limitation: with fewer than ten residuals per
 season, the per-stratum empirical quantiles are too noisy to
 serve as reliable calibration points.  Second, as $T_s$ grows,
-the stratified coverage improves monotonically from $0.50$
-at $T_s = 5$ to $0.84$ at $T_s = 50$, consistent with the
+the stratified coverage improves monotonically from $0.516$
+at $T_s = 5$ to $0.845$ at $T_s = 50$, consistent with the
 $O(\sqrt{\log T_s / T_s})$ decay in the theoretical bound.
-The pooled coverage, by contrast, plateaus near $0.88$ regardless
-of $T$: the persistent bias $2b_{s^*}$ prevents it from
+The pooled coverage, by contrast, plateaus near $0.88$ once
+$T_s \geq 20$ ($0.836$ and $0.865$ at $T_s = 5$ and $10$): the
+persistent bias $2b_{s^*}$ prevents it from
 converging to the nominal level.
 
 \begin{remark}[Practical sample-size guidance]
@@ -259,7 +279,7 @@ below), both methods perform similarly and the advantage of
 As $\sigma_{\mathrm{high}}$ increases, the pooled coverage for
 high-volatility seasons deteriorates markedly:
 at $\sigma_{\mathrm{high}} = 3$, pooled coverage in January
-falls to $\approx 0.74$, while the stratified method maintains
+falls to $\approx 0.70$, while the stratified method maintains
 coverage near $0.78$--$0.81$ for the same seasons.
 Simultaneously, the pooled coverage for low-volatility months
 rises to $\approx 0.95$--$0.97$, reflecting increasingly
@@ -287,9 +307,9 @@ and the theoretical bias $b_{s^*} = 0$.
 
 Empirically, pooled EnbPI achieves overall coverage of
 $\approx 0.88$, close to the nominal $0.90$, with small
-variation across seasons ($\approx 0.86$--$0.90$).
-\texttt{EnbPI-S} achieves only $\approx 0.80$ overall,
-a gap of roughly eight percentage points.
+variation across seasons ($\approx 0.87$--$0.89$).
+\texttt{EnbPI-S} achieves only $\approx 0.79$ overall,
+a gap of roughly nine percentage points.
 This gap represents the \emph{stratification cost}: using
 only $T_s \approx 19$ residuals per season instead of the full
 $T - p \approx 227$ enlarges the finite-sample error of the
@@ -300,9 +320,9 @@ who is uncertain whether seasonal heteroskedasticity is present
 should prefer \texttt{EnbPI-S} only if there is enough data
 (see Remark~\ref{rem:min_ts}) and if the heteroskedasticity
 is sufficiently pronounced to outweigh the stratification cost.
-The dominance condition (D) in
-Proposition~\ref{prop:strat_dominance} makes this trade-off
-precise in terms of $b_{s^*}$, $T$, and $S$.
+The dominance condition~\eqref{eq:dominance_condition} in
+Section~\ref{sec:theory:dominance} makes this trade-off
+precise in terms of $b_{s^*}$, $T$, and $\Sper$.
 
 %------------------------------------------------------------
 \subsection{E5: Predictor Robustness}
@@ -364,7 +384,7 @@ Pooled EnbPI corrects the distributional assumption through
 empirical quantiles, improving worst-case coverage to $0.776$,
 but retains the seasonal bias of pooled calibration.
 \texttt{EnbPI-S} corrects both, raising worst-case coverage
-to $0.844$ and reducing the coverage spread from $0.243$
+to $0.829$ and reducing the coverage spread from $0.243$
 (SARIMA) and $0.179$ (Pooled) to $0.019$,
 more than a twelve-fold reduction relative to SARIMA.
 
@@ -372,15 +392,8 @@ The main message is that \texttt{EnbPI-S} provides more
 \emph{balanced} and \emph{efficient} prediction intervals
 whenever seasonal heteroskedasticity is present and the
 per-stratum sample size $T_s$ is at least $30$--$40$.
-Its principal cost — lower coverage in the null case —
+Its principal cost (lower coverage in the null case)
 diminishes as $T$ grows and is absent when the analyst
 correctly identifies the seasonal structure.
 The empirical application in Section~\ref{sec:empirical}
 illustrates these trade-offs on real Brazilian inflation data.
-
-% ----------------------------------------------------------
-% Symbols needed:  \cmark and \xmark
-% Add to preamble: \usepackage{pifont}
-%                  \newcommand{\cmark}{\ding{51}}
-%                  \newcommand{\xmark}{\ding{55}}
-% ----------------------------------------------------------

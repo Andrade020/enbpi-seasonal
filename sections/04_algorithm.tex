@@ -127,11 +127,11 @@ The complete algorithm is given in Algorithm~\ref{alg:enbpis}.
   replacement\;
   Compute $\hat{f}^{\,b} = \calA\!\bigl((x_i, y_i),\; i \in S_b\bigr)$\;
 }
-Initialise $S$ empty ordered sets
+Initialise $\Sper$ empty ordered sets
 $\hat{\boldsymbol\epsilon}^{(1)}, \ldots, \hat{\boldsymbol\epsilon}^{(\Sper)}$\;
 \For{$i = 1, \ldots, T$}{
   $\hat{f}_{-i}^{\,\phi}(x_i) \leftarrow
-    \phi\!\bigl(\hat{f}^{\,b}(x_i),\; i \notin S_b\bigr)$\;
+    \phi\!\bigl(\hat{f}^{\,b}(x_i):\, b \text{ s.t. } i \notin S_b\bigr)$\;
   $\hat{\epsilon}_i \leftarrow y_i - \hat{f}_{-i}^{\,\phi}(x_i)$\;
   $\hat{\boldsymbol\epsilon}^{(s(i))} \leftarrow
     \hat{\boldsymbol\epsilon}^{(s(i))} \cup \{\hat{\epsilon}_i\}$\;
@@ -153,7 +153,7 @@ $\hat{\boldsymbol\epsilon}^{(1)}, \ldots, \hat{\boldsymbol\epsilon}^{(\Sper)}$\;
     \Quant{\hat{\beta}^{(\sstar)}}{\hat{\boldsymbol\epsilon}^{(\sstar)}}$\;
   $w_{\text{hi}} \leftarrow
     \Quant{1-\alpha+\hat{\beta}^{(\sstar)}}{\hat{\boldsymbol\epsilon}^{(\sstar)}}$\;
-  \Return $\hat{C}_t^{\alpha,\textup{strat}}(x_t) \leftarrow
+  Output $\hat{C}_t^{\alpha,\textup{strat}}(x_t) \leftarrow
     [\hat{f}_{-t}^{\,\phi}(x_t) + w_{\text{lo}},\;
      \hat{f}_{-t}^{\,\phi}(x_t) + w_{\text{hi}}]$\;
   \If{$(t - T) \equiv 0 \pmod{s_0}$}{

@@ -57,11 +57,13 @@ This paper makes three contributions.
   converges to zero at rate $O(\sqrt{\log T_s / T_s})$, where
   $T_s = T/\Sper$ is the per-stratum training size
   (Theorem~\ref{thm:strat_coverage}).
-  We also derive the dominance condition
-  (Proposition~\ref{prop:strat_dominance})
-  under which \texttt{EnbPI-S} has a strictly tighter bound
-  than pooled EnbPI, and a closed-form bound on the width
-  reduction achievable by stratification
+  We also derive an asymptotic dominance result
+  (Proposition~\ref{prop:strat_dominance}) and a
+  finite-sample dominance condition
+  \eqref{eq:dominance_condition} under which \texttt{EnbPI-S}
+  has a strictly tighter bound than pooled EnbPI, and a bound
+  showing that the \texttt{EnbPI-S} interval converges to the
+  season-specific oracle interval
   (Theorem~\ref{thm:width_bound}).
 \end{enumerate}
 
@@ -74,22 +76,23 @@ width adaptation (width ratio $1.78\times$ between
 most and least uncertain months) consistent with
 the data-limited predictions of Experiment E2.
 In the second (Brazilian export growth, BCB series 1402,
-$T_s = 35$), the method achieves coverage equidistant
-from the nominal for both methods ($3.3$ percentage
-points each), and the width ratio rises to $2.3\times$:
-\texttt{EnbPI-S} assigns a $13.8\%$ interval to February
-(harvest-onset, highest forecast risk) and a $6.0\%$
-interval to July (mid-year, lowest forecast risk), while
+$T_s = 35$), both methods achieve coverage within $3.3$
+percentage points of nominal (on opposite sides), and
+the width ratio rises to $2.3\times$:
+\texttt{EnbPI-S} assigns a $13.8\%$ interval to April
+(the peak of the soybean harvest-export season, highest
+forecast risk) and a $6.0\%$ interval to September
+(the most predictable month), while
 the pooled method applies a constant $10.2\%$ throughout.
 
 \paragraph{Relation to the literature.}
 Conformal prediction for time series has been developed along
 several orthogonal dimensions.  \citet{xu2023conformal}
 introduced EnbPI, which handles non-exchangeability via a
-LOO bootstrap ensemble and a sliding window update.
+leave-one-out (LOO) bootstrap ensemble and a sliding window update.
 \citet{xu2023sequential} extended it to exploit residual
-autocorrelation (SPCI), improving efficiency under serial
-dependence.  \citet{barber2023conformal} established coverage
+autocorrelation (Sequential Predictive Conformal Inference,
+SPCI), improving efficiency under serial dependence.  \citet{barber2023conformal} established coverage
 guarantees for non-exchangeable data through a weighted
 conformal framework.
 
@@ -113,20 +116,23 @@ The two can in principle be combined
 (Section~\ref{sec:conclusion}).
 
 The simulation study also benchmarks \texttt{EnbPI-S} against
-SARIMA$(1,0,0)(1,0,0)_{12}$ with Gaussian prediction intervals,
+a seasonal autoregressive integrated moving average model,
+SARIMA$(1,0,0)(1,0,0)_{12}$, with Gaussian prediction intervals,
 the standard parametric alternative.
-SARIMA is correctly specified for the seasonal mean of our DGP,
-so its failure (September coverage of $66.2\%$ against
-the $90\%$ nominal) is attributable entirely to two
-compounding distributional misspecifications:
+The SARIMA mean structure closely approximates that of our
+data-generating process (DGP; see
+Section~\ref{sec:simulations}), so its failure (September
+coverage of $66.2\%$ against the $90\%$ nominal) is
+attributable almost entirely to two compounding
+distributional misspecifications:
 Gaussian tails (underestimating the heavy $t_3$ innovations)
 and a single pooled $\hat{\sigma}$ (ignoring seasonal variance
 heterogeneity).
 Pooled EnbPI corrects the first failure through empirical
-quantiles ($+8.7$ pp on high-volatility coverage);
-\texttt{EnbPI-S} corrects both ($+5.6$ pp further),
-reducing the cross-season coverage spread twelve-fold
-relative to SARIMA ($0.019$ vs $0.243$).
+quantiles ($+8.9$ pp on high-volatility coverage);
+\texttt{EnbPI-S} corrects both ($+5.5$ pp further),
+reducing the cross-season coverage spread more than
+twelve-fold relative to SARIMA ($0.019$ vs $0.243$).
 
 \paragraph{Organisation.}
 Section~\ref{sec:model} introduces the model and background.

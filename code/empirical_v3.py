@@ -4,7 +4,7 @@ empirical_v3.py
 Second empirical application: Brazilian monthly export growth
 (BCB SGS series 1402 -- Exportacoes brasileiras, US$ millions).
 
-This application provides a test case with T_s = 36 observations
+This application provides a test case with T_s = 35-36 observations
 per season (training 1979-2014), in the regime where Theorem 1-S
 and Experiment E2 predict reliable coverage improvements for
 EnbPI-S over pooled calibration.
@@ -13,18 +13,25 @@ Seasonal heteroskedasticity mechanism:
   Brazilian exports are dominated by agricultural commodities
   (soybeans, coffee, sugarcane/ethanol, beef).  Harvest-cycle
   uncertainty creates clear seasonal differences in forecast-error
-  variance: Q1 (Jan-Mar) exhibits high variance due to soybean
-  planting uncertainty; Q3 (Jul-Sep) is relatively stable.
+  variance: the harvest-export ramp-up (Mar-May, peaking in April)
+  exhibits high variance; September is the most predictable month.
   Because the series is USD-denominated, it is unaffected by
   the Brazilian hyperinflation of the 1980s.
 
-Y_t is the monthly log-return:  Y_t = 100 * log(X_t / X_{t-1})
+Y_t is the monthly log-return:  Y_t = 100 * log(V_t / V_{t-1})
 
 Train / test split
 ------------------
-  Full series : Feb 1979 - Dec 2024  (n = 551 months)
-  Training    : Feb 1979 - Dec 2014  (T = 431, T_s = 35 per season)
+  Full series (levels)     : Feb 1979 - Dec 2024
+  Log-returns              : Mar 1979 - Dec 2024
+  Training    : Mar 1979 - Dec 2014  (T = 430; 35 or 36 obs per season)
   Test        : Jan 2015 - Dec 2024  (T1 = 120, same window as food IPCA)
+
+IMPORTANT: the log-return series starts in MARCH 1979, so array
+index 0 corresponds to March, not January.  All season labels are
+therefore derived from the true calendar month via cal_season()
+below (a bug in an earlier version used season(), which assumes
+index 0 = January and mislabelled every month by +2).
 
 Usage
 -----
@@ -59,6 +66,12 @@ DATA_CACHE  = os.path.join(_HERE, "..", "data", "exports_raw.csv")
 
 MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun",
                "Jul","Aug","Sep","Oct","Nov","Dec"]
+
+
+def cal_season(t0: int, month0: int, S_: int = S) -> int:
+    """True calendar season of array index t0, where index 0 falls in
+    calendar month `month0` (1-12).  Returns a value in 1..S_."""
+    return ((t0 + month0 - 1) % S_) + 1
 
 
 # ── 1. Data ───────────────────────────────────────────────────────────
@@ -125,7 +138,8 @@ def prepare_arrays(df: pd.DataFrame):
 
 # ── 2. Run both methods (shared with empirical_v2) ────────────────────
 
-def run_both(Y, T, T1, alpha=ALPHA, B=B_BOOT, s0=1, S=S, p=P_LAGS, seed=42):
+def run_both(Y, T, T1, alpha=ALPHA, B=B_BOOT, s0=1, S=S, p=P_LAGS, seed=42,
+             month0=1):
     rng = np.random.default_rng(seed)
     all_idx = np.arange(p, T + T1)
     X_all   = build_features(Y, all_idx, p)
@@ -152,7 +166,7 @@ def run_both(Y, T, T1, alpha=ALPHA, B=B_BOOT, s0=1, S=S, p=P_LAGS, seed=42):
     buf_p  = deque(loo_res.tolist())
     bufs_s = {s_: deque() for s_ in range(1, S + 1)}
     for k, idx in enumerate(all_idx[:n_tr]):
-        bufs_s[season(idx, S)].append(float(loo_res[k]))
+        bufs_s[cal_season(idx, month0, S)].append(float(loo_res[k]))
 
     cov_p = np.empty(T1, dtype=bool); cov_s = np.empty(T1, dtype=bool)
     lo_p  = np.empty(T1); hi_p = np.empty(T1)
@@ -164,7 +178,7 @@ def run_both(Y, T, T1, alpha=ALPHA, B=B_BOOT, s0=1, S=S, p=P_LAGS, seed=42):
         t0  = T + step
         f   = float(test_preds[step])
         y_t = float(Y[t0])
-        ss  = season(t0, S)
+        ss  = cal_season(t0, month0, S)
 
         arr_p = np.array(buf_p)
         b_p   = line_search_beta(arr_p, alpha)
@@ -184,7 +198,7 @@ def run_both(Y, T, T1, alpha=ALPHA, B=B_BOOT, s0=1, S=S, p=P_LAGS, seed=42):
                 if j0 >= p:
                     eps = get_res(j0)
                     buf_p.popleft(); buf_p.append(eps)
-                    sj = season(j0, S)
+                    sj = cal_season(j0, month0, S)
                     if bufs_s[sj]: bufs_s[sj].popleft()
                     bufs_s[sj].append(eps)
     print("done")
@@ -193,11 +207,11 @@ def run_both(Y, T, T1, alpha=ALPHA, B=B_BOOT, s0=1, S=S, p=P_LAGS, seed=42):
 
 # ── 3. Results ────────────────────────────────────────────────────────
 
-def season_summary(cov_p, lo_p, hi_p, cov_s, lo_s, hi_s, T):
+def season_summary(cov_p, lo_p, hi_p, cov_s, lo_s, hi_s, T, month0=1):
     T1 = len(cov_p)
     rows = []
     for s_ in range(1, S + 1):
-        mask = np.array([season(T + k, S) == s_ for k in range(T1)])
+        mask = np.array([cal_season(T + k, month0, S) == s_ for k in range(T1)])
         if mask.any():
             rows.append({
                 "season":    s_,
@@ -217,8 +231,9 @@ def latex_table(df, T, T1, Ts, alpha=ALPHA):
         r"\centering",
         r"\caption{Per-season empirical coverage and average width "
         r"for Brazilian monthly export growth forecasting.",
-        f"Training: Feb 1979--Dec 2014 ($T={T}$, $T_s={Ts}$); "
-        f"test: {TEST_START}--{TEST_END} ($T_1={T1}$); $\\alpha={alpha}$.}}",
+        f"Training: Mar 1979--Dec 2014 ($T={T}$; $T_s = 35$ or $36$ per season); "
+        f"test: Jan 2015--Dec 2024 ($T_1={T1}$); $\\alpha={alpha}$.",
+        r"Bold coverage = closest to nominal; italic width = narrowest.}",
         r"\label{tab:empirical_exports_coverage}",
         r"\begin{tabular}{l r cc cc}",
         r"\toprule",
@@ -354,11 +369,15 @@ if __name__ == "__main__":
     Y, T, T1, dates = prepare_arrays(df_raw)
     Ts = T // S
 
+    month0 = int(dates[0].month)   # calendar month of array index 0 (March)
+    print(f"    (array index 0 = calendar month {month0})")
+
     print("\n--- Running methods ---")
-    (cov_p, lo_p, hi_p), (cov_s, lo_s, hi_s) = run_both(Y, T, T1)
+    (cov_p, lo_p, hi_p), (cov_s, lo_s, hi_s) = run_both(Y, T, T1, month0=month0)
 
     dates_test = dates[dates >= pd.Timestamp(TEST_START)]
-    df_s       = season_summary(cov_p, lo_p, hi_p, cov_s, lo_s, hi_s, T)
+    df_s       = season_summary(cov_p, lo_p, hi_p, cov_s, lo_s, hi_s, T,
+                                month0=month0)
 
     print("\n--- Results ---")
     print(f"{'Month':<6} {'Cov_P':>7} {'Cov_S':>7} {'Wid_P':>8} {'Wid_S':>8}")
