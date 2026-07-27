@@ -1,95 +1,76 @@
 % ============================================================
 % ABSTRACT
 % ============================================================
-We study the coverage properties of the Ensemble Batch
-Prediction Intervals (EnbPI) algorithm of \citet{xu2023conformal}
-under seasonal heteroskedasticity (the empirically common
-setting in which the variance of forecast errors varies
-systematically by calendar season).  We show that pooled
-calibration introduces a persistent, season-dependent bias
-of magnitude $2b_{s^*}$ in the per-season coverage gap,
-where $b_{s^*}$ measures the discrepancy between the
-season-specific residual CDF and the pooled mixture CDF.
-This bias does not vanish as the training sample grows,
-causing systematic undercoverage in high-volatility seasons
-and overcoverage in low-volatility seasons.
+Pooled calibration of conformal prediction intervals, as in the
+Ensemble Batch Prediction Intervals (EnbPI) algorithm of
+\citet{xu2023conformal}, carries a persistent bias under seasonal
+heteroskedasticity: the per-season coverage gap contains a term
+$2b_{s^*}$, which measures the discrepancy between the season-specific
+and the pooled residual distribution and does not vanish as the sample
+grows, so that volatile seasons are systematically undercovered.  Two
+schemes remove it, and they are the endpoints of a one-parameter
+family: stratifying the calibration buffer by season, and standardising
+residuals by a season-specific scale before pooling them.  The second
+is the more efficient of the two, and it is valid only when the seasons
+differ in scale alone; when they differ in the shape of the error
+distribution it leaves the coverage spread where pooling left it, while
+stratification cuts it by two thirds.
 
-To correct for this bias, we propose \texttt{EnbPI-S}, a
-stratified extension of EnbPI that maintains $S$ separate
-calibration buffers (one per calendar season) while
-keeping the bootstrap training phase and sliding-window
-update of the original algorithm unchanged.  We prove that
-the per-season coverage gap of \texttt{EnbPI-S} converges
-to zero at rate $O(\sqrt{\log T_s / T_s})$, where
-$T_s = T/S$ is the per-stratum sample size, and derive
-a finite-sample dominance condition that identifies when
-stratification yields tighter intervals than pooling.
-
-Simulation experiments compare three methods
-(SARIMA-Gaussian, Pooled EnbPI, and \texttt{EnbPI-S}),
-revealing a progressive improvement.
-SARIMA-Gaussian suffers from two compounding failures
-(Gaussian tails and pooled variance), achieving only $66\%$
-coverage in September at the $90\%$ nominal level.
-Pooled EnbPI corrects the distributional assumption via
-empirical quantiles, raising high-volatility coverage to $79\%$.
-\texttt{EnbPI-S} further corrects the seasonal calibration
-bias: high-volatility coverage rises to $84\%$, and the
-cross-season coverage spread collapses from $0.24$ (SARIMA)
-to $0.02$, a twelve-fold reduction.
-An application to the food-at-home component of the
-Brazilian consumer price index (IPCA; BCB series 1635,
-1995--2024) illustrates that \texttt{EnbPI-S}
-correctly assigns wider intervals to high-uncertainty
-months and narrower intervals to predictable months,
-while the pooled method applies a uniform bandwidth.
-A second application to Brazilian monthly export growth
-($T_s = 35$) confirms the method in the adequate-sample
-regime: both methods achieve coverage within $3.3$
-percentage points of nominal, and \texttt{EnbPI-S}
-produces a factor-of-$2.3$ width variation across seasons,
-with the widest interval in April (the peak of the soybean
-harvest-export season) and the narrowest in September.
+Stratification is usually thought too expensive at the per-season
+sample sizes a monthly series provides, and we show that most of that
+expense belongs to the interval construction rather than to the
+conditioning.  The empirical quantile of a short buffer is biased
+inwards, and the minimum-width line search selects the narrowest of
+many candidate quantile pairs computed from the same residuals, which
+alone costs four to six percentage points of coverage at these buffer
+lengths.  Building the interval from conformal order statistics with a
+fixed asymmetry repairs both, and stratified coverage at twenty
+residuals per season then rises from $0.79$ to its nominal $0.90$ in
+four different seasonal designs, the residual cost being width rather
+than coverage.  On the food-at-home component of the Brazilian consumer
+price index (IPCA; BCB series 1635, $T_s = 20$) the same change takes
+coverage from $79.2\%$ to exactly $90.0\%$ with no dispersion across
+the twelve calendar months, and on monthly export growth (BCB series
+1402, $T_s = 35$) it raises the worst month from $70\%$ to $90\%$ and
+overall coverage from $86.7\%$ to $95.0\%$, the overshoot being the
+conservatism of an interval whose endpoints are still the extremes of
+its buffer.  A permutation test rejects the pure-scale restriction on
+both series.
 
 \bigskip
 
 \noindent\textbf{Resumo:}
 \begin{otherlanguage}{brazilian}%
-Estudamos as propriedades de cobertura do algoritmo
-EnbPI \citep{xu2023conformal} sob heteroscedasticidade
-sazonal, cenário em que a variância dos erros de previsão
-varia sistematicamente por estação do calendário.
-Mostramos que a calibração conjunta (pooled) introduz um
-viés persistente de magnitude $2b_{s^*}$ na cobertura
-por estação.  Para corrigir esse viés, propomos o
-\texttt{EnbPI-S}, uma extensão estratificada do EnbPI
-que mantém $S$ buffers de calibração separados (um
-por mês do calendário), preservando integralmente a
-fase de treinamento por bootstrap e a atualização em
-janela deslizante do algoritmo original.
-Provamos que a lacuna de cobertura por estação de
-\texttt{EnbPI-S} converge a zero na taxa
-$O(\sqrt{\log T_s / T_s})$ e derivamos uma condição
-de dominância de amostra finita.
-Experimentos de Monte Carlo com três métodos
-(SARIMA-Gaussiano, EnbPI agrupado e \texttt{EnbPI-S})
-revelam melhora progressiva: o SARIMA cobre apenas $66\%$
-no pior mês; o EnbPI agrupado eleva isso para $79\%$;
-o \texttt{EnbPI-S} chega a $84\%$ e reduz a dispersão
-de cobertura entre estações em doze vezes.
-Uma aplicação ao componente de Alimentação no domicílio do
-IPCA (BCB série 1635, 1995--2024) ilustra que
-\texttt{EnbPI-S} produz intervalos mais largos nos meses
-de ajuste de safra (maio--junho) e mais estreitos nos
-meses estáveis (fevereiro, abril), enquanto o método
-conjunto aplica uma largura uniforme ao longo do ano.
-Uma segunda aplicação ao crescimento das exportações
-brasileiras ($T_s = 35$, série BCB 1402, 1979--2024)
-confirma o método no regime de amostra adequada: ambos
-os métodos atingem cobertura dentro de $3{,}3$ pontos
-percentuais do nominal, e o \texttt{EnbPI-S} produz
-uma variação de $2{,}3$ vezes na largura dos intervalos
-ao longo do ano, com o intervalo mais largo em abril
-(pico do escoamento da safra de soja) e o mais estreito
-em setembro.
+A calibração conjunta (\emph{pooled}) de intervalos conformes, como no
+algoritmo EnbPI de \citet{xu2023conformal}, carrega um viés persistente
+sob heteroscedasticidade sazonal: a lacuna de cobertura por estação
+contém um termo $2b_{s^*}$ que não desaparece à medida que a amostra
+cresce, de forma que as estações voláteis ficam sistematicamente
+subcobertas.  Dois esquemas o eliminam, e são os extremos de uma
+família de um parâmetro: estratificar o buffer de calibração por
+estação, ou padronizar os resíduos por uma escala específica de cada
+estação antes de agrupá-los.  O segundo é o mais eficiente dos dois,
+porém só é válido quando as estações diferem apenas em escala; quando
+diferem na forma da distribuição dos erros, ele deixa a dispersão da
+cobertura onde a calibração conjunta a deixou, ao passo que a
+estratificação a reduz em dois terços.
+
+Costuma-se considerar a estratificação cara demais para os tamanhos
+amostrais por estação de uma série mensal, e mostramos que a maior
+parte desse custo pertence à construção do intervalo, e não ao
+condicionamento.  O quantil empírico de um buffer curto é enviesado
+para dentro, e a busca por largura mínima seleciona o par de quantis
+mais estreito entre muitos candidatos calculados dos mesmos resíduos, o
+que sozinho custa de quatro a seis pontos percentuais de cobertura
+nesses tamanhos.  Construir o intervalo a partir de estatísticas de
+ordem conformes, com assimetria fixa, corrige as duas coisas, e a
+cobertura estratificada com vinte resíduos por estação sobe então de
+$0{,}79$ para o nominal $0{,}90$ em quatro desenhos sazonais
+diferentes, sendo o custo remanescente de largura, e não de cobertura.
+No componente de Alimentação no domicílio do IPCA (BCB série 1635,
+$T_s = 20$), a mesma mudança leva a cobertura de $79{,}2\%$ para
+exatamente $90{,}0\%$, sem dispersão entre os doze meses do calendário;
+no crescimento mensal das exportações (BCB série 1402, $T_s = 35$), ela
+eleva o pior mês de $70\%$ para $90\%$.  Um teste de permutação rejeita
+a restrição de escala pura nas duas séries.
 \end{otherlanguage}

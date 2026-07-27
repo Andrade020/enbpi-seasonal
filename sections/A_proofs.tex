@@ -1,15 +1,16 @@
 % ============================================================
-% APPENDIX A — PROOFS
+% APPENDIX A - PROOFS
 % ============================================================
 \section{Proofs}
 \label{app:proofs}
 
-We collect the proofs of all stated results.  For clarity, we
-follow the notation of \citet{xu2023conformal} and explicitly
-identify where the seasonal structure introduces differences.
-Without loss of generality, we prove results for $t = T+1$
-(one-step-ahead prediction); extensions to $t > T+1$ hold by
-the same argument whenever Assumptions~\ref{ass:strat_a1}--\ref{ass:strat_a2}
+This appendix collects the proofs of all stated results.  For
+clarity, the notation of \citet{xu2023conformal} is followed
+throughout, and the points at which the seasonal structure
+introduces differences are identified explicitly.  Without loss of
+generality, the results are proved for $t = T+1$ (one-step-ahead
+prediction); extensions to $t > T+1$ hold by the same argument
+whenever Assumptions~\ref{ass:strat_a1}--\ref{ass:strat_a2}
 are satisfied at indices $t-T, \ldots, t$.
 
 %-----------------------------------------------------------------
@@ -34,10 +35,10 @@ the sample size $T$.  Hence $\bsstar$ does not depend on $T$.
 %-----------------------------------------------------------------
 
 The sharp DKW inequality of \citet{massart1990tight} applies to
-i.i.d.\ samples.  The pooled empirical CDF under
-Assumption~\ref{ass:seasonal} aggregates independent but
-\emph{not} identically distributed errors, so we record the
-following standard substitute, proved by symmetrisation and the
+i.i.d.\ samples, whereas the pooled empirical CDF under
+Assumption~\ref{ass:seasonal_general} aggregates independent but
+\emph{not} identically distributed errors.  The following standard
+substitute is therefore recorded, proved by symmetrisation and the
 bounded-differences inequality
 \citep{boucheron2013concentration}.
 
@@ -48,13 +49,13 @@ variables with (possibly distinct) CDFs $F_{s(1)}, \ldots,
 F_{s(T)}$, let
 $\tilde{F}_T(x) = T^{-1}\sum_{t=1}^T \Ind{\epsilon_t \leq x}$
 and $\bar{F}_T(x) = T^{-1}\sum_{t=1}^T F_{s(t)}(x)$.  Then
-\[
+\begin{align*}
   \E\Bigl[\sup_x \bigl|\tilde{F}_T(x) - \bar{F}_T(x)\bigr|\Bigr]
-  \;\leq\; 2\sqrt{\frac{2\log(2(T+1))}{T}},
-  \qquad
+  &\;\leq\; 2\sqrt{\frac{2\log(2(T+1))}{T}}, \\
   \Prob\Bigl(\sup_x \bigl|\tilde{F}_T(x) - \bar{F}_T(x)\bigr|
-  > \E[\,\cdot\,] + u\Bigr) \;\leq\; e^{-2Tu^2}
-\]
+  > \E[\,\cdot\,] + u\Bigr)
+  &\;\leq\; e^{-2Tu^2}
+\end{align*}
 for every $u > 0$.  In particular, with probability at least
 $1 - (16T)^{-1}$,
 \[
@@ -92,8 +93,9 @@ $\E[\sup] + u \leq
 \label{app:proofs:prop_pooled}
 %-----------------------------------------------------------------
 
-We follow the proof of \citet[Theorem~1]{xu2023conformal}, modified
-to account for the heterogeneous seasonal distributions.
+The argument follows the proof of
+\citet[Theorem~1]{xu2023conformal}, modified to account for the
+heterogeneous seasonal distributions.
 
 \medskip
 \noindent\textit{Step 1 (p-value equivalence).}
@@ -156,9 +158,9 @@ By Lemma~\ref{lem:coupling}, $\hat{\epsilon}_t = \epsilon_t +
 (f(x_t) - \hat{f}_{-t}^{\,\phi}(x_t))$.  We apply Lemma~2 of
 \citet{xu2023conformal}, whose proof extends to non-identically
 distributed errors once the common CDF $F$ in step~(iii) of their
-argument is replaced by the mixture $\bar{F}$, which is Lipschitz
-with constant $L = \max_s L_s$ (Assumption~\ref{ass:xu_a2} is used
-unchanged):
+argument is replaced by the mixture $\bar{F}$, Lipschitz with
+constant $L = \max_s L_s$, while Assumption~\ref{ass:xu_a2} is used
+unchanged:
 \[
   \sup_x\bigl|\hat{F}_T^{\text{pool}}(x) - \tilde{F}_T^{\text{pool}}(x)\bigr|
   \;\leq\;
@@ -171,12 +173,12 @@ where $L = \max_s L_s$.
 Lemma~\ref{lem:dkw_noniid}).}
 The errors $\{\epsilon_t\}_{t=1}^T$ are mutually independent
 with marginal distributions $F_{s(t)}$
-(Assumption~\ref{ass:seasonal}), and under the balanced panel
+(Assumption~\ref{ass:seasonal_general}), and under the balanced panel
 $E[\tilde{F}_T^{\text{pool}}(x)]
 = T^{-1}\sum_{t=1}^T F_{s(t)}(x) = \bar{F}(x)$.
 Since the errors are not identically distributed, the sharp DKW
-inequality of \citet{massart1990tight} is not available; we
-invoke Lemma~\ref{lem:dkw_noniid} instead.  Define the good event
+inequality of \citet{massart1990tight} is not available, and
+Lemma~\ref{lem:dkw_noniid} is invoked instead.  Define the good event
 \[
   A_T \;=\;
   \Bigl\{\sup_x\bigl|\tilde{F}_T^{\text{pool}}(x)-\bar{F}(x)\bigr|
@@ -412,7 +414,7 @@ by their within-stratum counterparts
 Define $\hat{F}_{\Ts}^{(\sstar),-1}$ as the interpolated inverse
 CDF of the within-stratum residuals, with Lipschitz constant
 $K'_{\sstar}$ as defined in Theorem~\ref{thm:width_bound}.
-The symmetric difference $\Delta_{\sstar}(T)$ between
+The symmetric difference $\mathcal{D}_{\sstar}(T)$ between
 $\hat{C}_{T+1}^{\alpha,\text{strat}}$ and the oracle $C_{T+1}^\alpha$
 is decomposed into three parts:
 \begin{enumerate}

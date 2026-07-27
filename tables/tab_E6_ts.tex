@@ -1,0 +1,28 @@
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Experiment E6, continued: coverage and mean width as the
+         per-stratum size grows, under seasonal scale
+         heterogeneity ($n_{\mathrm{rep}} = 200$).  The
+         non-monotonicity of the daggered schemes is the
+         discreteness of the conformal index: at $\Ts = 20$ and
+         $35$ the endpoints are the buffer extremes, at $\Ts = 50$
+         they move inside.}
+\label{tab:e6_ts}
+\begin{tabular}{l cc cc cc}
+\toprule
+ & \multicolumn{2}{c}{$\Ts = 20$} & \multicolumn{2}{c}{$\Ts = 35$} & \multicolumn{2}{c}{$\Ts = 50$} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Method & Coverage & Width & Coverage & Width & Coverage & Width \\
+\midrule
+\texttt{EnbPI-S} & 0.785 & 5.30 & 0.832 & 5.52 & 0.846 & 5.64 \\
+\texttt{EnbPI-S}$^\dagger$ & 0.898 & 9.22 & 0.944 & 11.28 & 0.919 & 8.15 \\
+\texttt{EnbPI-H}($\tfrac12$) & 0.908 & 8.24 & 0.934 & 9.01 & 0.913 & 7.37 \\
+\texttt{EnbPI-H}($\hat\lambda$) & 0.903 & 9.18 & 0.932 & 9.34 & 0.909 & 7.29 \\
+Pooled & 0.880 & 6.46 & 0.891 & 6.40 & 0.888 & 6.40 \\
+\texttt{EnbPI-N}$^\dagger$ & 0.885 & 7.26 & 0.896 & 6.74 & 0.893 & 6.59 \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Nominal coverage $0.90$.}\\
+\end{tabular}
+\end{table}

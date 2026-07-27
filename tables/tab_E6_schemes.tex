@@ -1,0 +1,35 @@
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Experiment E6: calibration schemes across four
+         data-generating processes at $\Ts = 20$
+         ($\alpha = 0.10$, $n_{\mathrm{rep}} = 200$; Monte Carlo
+         standard errors of the coverage entries do not exceed
+         $0.0035$).  A dagger marks the two
+         repairs of Section~\ref{sec:algorithm:defects}: conformal
+         order statistics and $\beta$ fixed at $\alpha/2$.  Spread
+         is the largest minus the smallest per-season coverage,
+         Worst the smallest.  All schemes share one ensemble per
+         replication.}
+\label{tab:e6_schemes}
+\begin{tabular}{l cccc cccc}
+\toprule
+ & \multicolumn{4}{c}{Coverage} & \multicolumn{4}{c}{Spread} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Method & Scale & Shape & Both & None & Scale & Shape & Both & None \\
+\midrule
+Pooled & 0.880 & 0.882 & 0.882 & 0.882 & 0.181 & 0.099 & 0.040 & 0.016 \\
+\texttt{EnbPI-N} & 0.862 & 0.867 & 0.868 & 0.866 & 0.021 & 0.098 & 0.105 & 0.019 \\
+\texttt{EnbPI-S} & 0.785 & 0.790 & 0.790 & 0.789 & 0.032 & 0.036 & 0.042 & 0.027 \\
+\midrule
+Pooled$^\dagger$ & 0.903 & 0.903 & 0.902 & 0.903 & 0.155 & 0.083 & 0.058 & 0.011 \\
+\texttt{EnbPI-N}$^\dagger$ & 0.885 & 0.888 & 0.890 & 0.890 & 0.027 & 0.111 & 0.116 & 0.018 \\
+\texttt{EnbPI-S}$^\dagger$ & 0.898 & 0.900 & 0.898 & 0.901 & 0.029 & 0.021 & 0.027 & 0.021 \\
+\texttt{EnbPI-H}($\hat\lambda$) & 0.903 & 0.908 & 0.908 & 0.904 & 0.024 & 0.029 & 0.033 & 0.016 \\
+\texttt{EnbPI-H}($\tfrac12$) & 0.908 & 0.913 & 0.914 & 0.909 & 0.018 & 0.053 & 0.058 & 0.015 \\
+\bottomrule
+\multicolumn{9}{l}{\footnotesize Nominal coverage $0.90$.  Column headings name the seasonal structure of the errors: scale only,}\\
+\multicolumn{9}{l}{\footnotesize shape only, both, or none.}\\
+\end{tabular}
+\end{table}

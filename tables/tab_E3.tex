@@ -1,0 +1,26 @@
+\begin{table}[ht]
+\centering
+\caption{Experiment E3: effect of the heteroskedasticity
+         intensity $\sigma_{\mathrm{high}}$ on per-season
+         coverage ($T = 240$, $\Ts = 20$, $\alpha = 0.10$,
+         $n_{\mathrm{rep}} = 200$).  High-volatility seasons are
+         January, February, August and September.  Coverage
+         entries are averages over the seasons in each group;
+         Monte Carlo standard errors are at most $0.010$.
+         Spread is the largest minus the smallest per-season
+         coverage.}
+\label{tab:e3_intensity}
+\begin{tabular}{c cc cc cc}
+\toprule
+ & \multicolumn{2}{c}{High-volatility coverage} & \multicolumn{2}{c}{Low-volatility coverage} & \multicolumn{2}{c}{Coverage spread} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+$\sigma_{\mathrm{high}}$ & Pooled & \texttt{EnbPI-S} & Pooled & \texttt{EnbPI-S} & Pooled & \texttt{EnbPI-S} \\
+\midrule
+1.0 & 0.881 & 0.793 & 0.881 & 0.787 & 0.017 & 0.025 \\
+1.5 & 0.818 & 0.796 & 0.912 & 0.781 & 0.112 & 0.032 \\
+2.0 & 0.770 & 0.796 & 0.934 & 0.779 & 0.184 & 0.032 \\
+3.0 & 0.715 & 0.797 & 0.961 & 0.778 & 0.264 & 0.034 \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Nominal coverage $1-\alpha = 0.90$.  $\sigma_{\mathrm{high}} = 1.0$ is the homoskedastic null case of Experiment E4.}\\
+\end{tabular}
+\end{table}

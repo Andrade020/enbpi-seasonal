@@ -1,0 +1,41 @@
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{The calibration schemes on the two applications
+         ($\alpha = 0.10$, test window Jan 2015--Dec 2024,
+         $n_s = 10$ observations per season).  A dagger marks the
+         conformal order statistics with $\beta$ fixed at
+         $\alpha/2$.  Spread is the largest minus the smallest
+         per-season coverage and Worst the smallest; the width ratio
+         is the largest over the smallest per-season mean width.
+         Widths are in percentage points for the IPCA application
+         and in per cent for export growth, so they are comparable
+         only within an application.}
+\label{tab:empirical_family}
+\begin{tabular}{l l ccc cc}
+\toprule
+Application & Method & Coverage & Worst & Spread & Width & Width ratio \\
+\midrule
+IPCA food ($\Ts = 20$) & Pooled & 0.858 & 0.70 & 0.30 & 1.82 & 1.01 \\
+ & \texttt{EnbPI-N} & 0.867 & 0.70 & 0.30 & 1.97 & 2.28 \\
+ & \texttt{EnbPI-S} & 0.792 & 0.60 & 0.30 & 1.44 & 1.78 \\
+ & Pooled$^\dagger$ & 0.858 & 0.70 & 0.30 & 1.97 & 1.01 \\
+ & \texttt{EnbPI-N}$^\dagger$ & 0.875 & 0.70 & 0.30 & 2.14 & 2.27 \\
+ & \texttt{EnbPI-S}$^\dagger$ & 0.900 & 0.90 & 0.00 & 2.26 & 2.55 \\
+ & \texttt{EnbPI-H}($\hat\lambda$) & 0.883 & 0.80 & 0.20 & 2.30 & 2.44 \\
+ & \texttt{EnbPI-H}($\tfrac12$) & 0.883 & 0.80 & 0.20 & 2.20 & 2.00 \\
+\midrule
+Exports ($\Ts = 35$) & Pooled & 0.933 & 0.70 & 0.30 & 10.17 & 1.01 \\
+ & \texttt{EnbPI-N} & 0.917 & 0.70 & 0.30 & 10.42 & 2.07 \\
+ & \texttt{EnbPI-S} & 0.867 & 0.70 & 0.30 & 8.49 & 2.30 \\
+ & Pooled$^\dagger$ & 0.925 & 0.70 & 0.30 & 10.79 & 1.01 \\
+ & \texttt{EnbPI-N}$^\dagger$ & 0.925 & 0.70 & 0.30 & 10.90 & 2.07 \\
+ & \texttt{EnbPI-S}$^\dagger$ & 0.950 & 0.90 & 0.10 & 16.58 & 3.54 \\
+ & \texttt{EnbPI-H}($\hat\lambda$) & 0.950 & 0.90 & 0.10 & 13.63 & 2.66 \\
+ & \texttt{EnbPI-H}($\tfrac12$) & 0.958 & 0.90 & 0.10 & 13.74 & 2.44 \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Nominal coverage $0.90$.  With ten test observations per season a per-season coverage is a}\\
+\multicolumn{7}{l}{\footnotesize multiple of $0.1$, so Spread and Worst are coarse; they are reported for completeness.}\\
+\end{tabular}
+\end{table}

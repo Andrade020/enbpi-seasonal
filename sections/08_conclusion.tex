@@ -1,5 +1,5 @@
 % ============================================================
-% SECTION 8 — CONCLUSION
+% SECTION 8 - CONCLUSION
 % ============================================================
 \section{Conclusion}
 \label{sec:conclusion}
@@ -9,157 +9,185 @@
 \label{sec:conclusion:summary}
 %------------------------------------------------------------
 
-We identified a structural limitation of the pooled EnbPI
-algorithm \citep{xu2023conformal} when applied to seasonally
+We identified a structural limitation of the pooled EnbPI algorithm
+\citep{xu2023conformal} when it is applied to seasonally
 heteroskedastic time series: pooled calibration introduces a
-persistent, season-dependent coverage bias of magnitude
-$2b_{s^*}$ that does not vanish as the training sample grows
-(Proposition~\ref{prop:pooled_gap}).  We proposed
-\texttt{EnbPI-S}, a minimal modification that routes each
-LOO residual to a season-specific calibration buffer, eliminating
-this bias while preserving the bootstrap training procedure,
-the sliding-window update, and the asymmetric line-search
-optimisation of the original algorithm.
+persistent, season-dependent coverage bias of magnitude $2b_{s^*}$
+that does not vanish as the training sample grows
+(Proposition~\ref{prop:pooled_gap}).  Two schemes remove it, and they
+are the endpoints of the one-parameter family~\eqref{eq:family}:
+stratifying the calibration buffer by season, which is
+\texttt{EnbPI-S}, and standardising each residual by a season-specific
+scale before pooling, which is \texttt{EnbPI-N}.  The second is the
+more efficient of the two, delivering a comparable coverage level from
+an interval about a fifth narrower, and it is valid only under the
+scale-mixture restriction of Assumption~\ref{ass:seasonal}; the first
+does not need that restriction, and when the seasons differ in the
+shape of the error distribution rather than in its scale it is the only
+one of the two that equalises coverage, cutting the seasonal spread to
+a third of what pooling leaves while normalisation leaves it
+essentially untouched.  A permutation test on the training residuals
+decides between the two configurations, and on both Brazilian series it
+rejects the pure-scale restriction.
 
-Theoretically, we proved that the per-season coverage gap of
-\texttt{EnbPI-S} decays at rate $O(\sqrt{\log T_s / T_s})$,
-where $T_s = T/\Sper$ is the per-stratum training size, and
-derived an asymptotic dominance result
-(Proposition~\ref{prop:strat_dominance}) together with a
-finite-sample dominance condition~\eqref{eq:dominance_condition}
-linking the benefit of stratification to the size of $b_{s^*}$
-and the training sample length.
-A companion bound shows that the \texttt{EnbPI-S} interval
-converges to the season-specific oracle interval
-(Theorem~\ref{thm:width_bound}).
+The paper's second finding was not the one it set out to make.  The
+coverage that stratified calibration loses at the per-season sample
+sizes a monthly series provides, eleven percentage points at
+$\Ts = 20$, is not the price of conditioning on the season.  It is the
+price of two properties of the calibration step of the original
+algorithm: the empirical quantile of a short buffer is biased inwards,
+and the minimum-width line search selects the narrowest of many
+candidate quantile pairs computed from the same residuals, which alone
+costs four to six percentage points at these buffer lengths.  Building
+the interval from conformal order statistics with the asymmetry fixed
+at $\alpha/2$ repairs both, and stratified coverage at twenty residuals
+per season then attains its nominal level in all four seasonal designs
+we study.  What remains is a cost in width rather than in coverage, and
+it is the honest price of a finite-sample guarantee on a short buffer;
+blending towards the normalised endpoint recovers about a tenth of it.
 
-Empirically, the simulation study confirmed that
-\texttt{EnbPI-S} produces more uniform coverage across seasons
-than pooled EnbPI: for $T = 480$ months and $\sigma_{\mathrm{high}}/\sigma_{\mathrm{low}} = 2$,
-the per-season coverage range shrinks from $\approx 0.18$
-(pooled) to $\approx 0.02$ (stratified), and the worst-case
-per-season coverage improves from $\approx 0.78$ to
-$\approx 0.83$.  The interval widths for \texttt{EnbPI-S}
-correctly reflect the seasonal $\sigma$ ratio.
-Two empirical applications used the same test window
-(January 2015 -- December 2024).
-The food-at-home IPCA application ($T_s = 20$) demonstrated
-clear width adaptation (ratio $1.78\times$).
-The Brazilian export growth application ($T_s = 35$,
-BCB series 1402) confirmed the method in the
-adequate-sample regime: both methods achieved coverage
-within $3.3$ percentage points of nominal, and
-\texttt{EnbPI-S} produced a factor-of-$2.3$ width variation,
-correctly assigning a $13.8\%$ interval to April
-(the peak of the soybean harvest-export season) and a $6.0\%$
-interval to September,
-while the pooled baseline applied a constant $\approx 10.2\%$
-throughout.
+On the theoretical side, we proved that the per-season coverage gap of
+\texttt{EnbPI-S} decays at rate $O(\sqrt{\log T_s / T_s})$, where
+$T_s = T/\Sper$ is the per-stratum training size, and we derived an
+asymptotic dominance result (Proposition~\ref{prop:strat_dominance})
+together with a finite-sample condition~\eqref{eq:dominance_condition}
+that links the benefit of stratification to the size of $b_{s^*}$ and
+to the training sample length, although that condition turns out to be
+too conservative to be checked at any sample size an economic series
+provides.  Proposition~\ref{prop:family_coverage} bounds the coverage
+of the interpolated interval and shows that asymptotic validity
+requires the weight to tend to one whenever the shape discrepancy is
+nonzero.  The result that carries the most weight, however, is the
+smallest: Proposition~\ref{prop:finite_sample} records that the
+conformal endpoints deliver at least $1-\alpha$ exactly, at every
+buffer length above $2/\alpha - 1$, and no more than
+$1-\alpha + 2/(\Ts+1)$.  That pair of bounds is what the repaired
+construction is doing, and it explains both halves of what the
+experiments show: the nominal coverage at twenty residuals per season
+and the conservatism that comes with it.  Two limits of that theory should be read alongside it.  It is
+stated for a fixed quantile pair, whereas the algorithm chooses the
+pair from the same buffer, and Experiment E6 measures what that costs;
+and it says nothing about the data-driven weight, for the reason given
+in Remark~\ref{rem:lambda_honesty}.
+
+Empirically, the two applications share the test window January 2015 to
+December 2024.  On food-at-home IPCA ($\Ts = 20$), the stratified
+scheme built from conformal order statistics attains exactly $90.0\%$
+coverage with no dispersion across the twelve calendar months, against
+$79.2\%$ for the same buffer read as an empirical quantile.  On
+Brazilian export growth ($\Ts = 35$, BCB series 1402), the same change
+raises the worst month from $70\%$ to $90\%$ and overall coverage from
+$86.7\%$ to $95.0\%$, the overshoot being the conservatism of an
+interval whose endpoints are still the extremes of a
+thirty-five-observation buffer, at roughly twice the width; blending
+towards the normalised endpoint brings the width back by a fifth at the
+same coverage.  In both applications the seasonal width pattern is
+economically interpretable, widest in June for food prices and in April
+for exports, at the peak of the soybean harvest-export season.
 
 %------------------------------------------------------------
 \subsection{Limitations}
 \label{sec:conclusion:limitations}
 %------------------------------------------------------------
 
-\paragraph{Minimum stratum size.}
-The main practical limitation of \texttt{EnbPI-S} is its
-requirement for a sufficient per-stratum sample size.
-Our simulation study (Experiment E2) suggests that
-$T_s \gtrsim 30$--$40$ observations per season are needed
-for the stratified method to outperform pooled calibration
-in terms of overall coverage.  For monthly data with
-$\Sper = 12$ seasons, this requires $T \gtrsim 360$--$480$
-months (30--40 years), which may not be available in
-all applications.
+The main practical limitation is not the one earlier drafts of this
+paper reported.  It is not that a season buffer of twenty residuals
+cannot support a valid interval, since Experiment E6 shows that it can;
+it is that the interval it supports is wide.  Between the two
+thresholds discussed after~\eqref{eq:feasible} the conformal endpoints are the
+extremes of the buffer, so at $\Ts = 20$ the stratified interval is
+about forty per cent wider than the pooled one, and the excess is only
+partly recovered by blending towards the normalised endpoint.  An
+analyst who needs a narrow interval more than a season-conditional
+guarantee should still pool, and should know that is the trade being
+made.
 
-\paragraph{Data frequency and the quarterly-data challenge.}
-The minimum-stratum-size requirement interacts directly with
-data frequency and structural stability.
-For \emph{monthly} data ($\Sper = 12$), the threshold
-$T_s \gtrsim 30$ translates to $T \gtrsim 360$ months
-(30 years), achievable for standard macroeconomic series
-such as industrial production or price indices.
-For \emph{quarterly} data ($\Sper = 4$), the same $T_s$
-threshold requires only $T \gtrsim 120$ quarters, also
-30 years, but the assumption of structural stability over
-three decades is considerably harder to justify for
-quarterly aggregates such as GDP: the 2008--09 financial
-crisis and the 2020 COVID recession both constitute
-substantial regime shifts that can invalidate a calibration
-buffer spanning that horizon.
-The practical implication is that \texttt{EnbPI-S} shines
-most naturally on \emph{monthly or higher-frequency} data:
-\begin{itemize}[nosep]
-  \item[(i)]   $T_s$ large enough is reached within a single economic cycle;
-  \item[(ii)]  seasonal het\-ero\-sked\-as\-tic\-ity is typically more
-               pronounced (harvest and weather effects operate at the monthly
-               scale); and
-  \item[(iii)] structural breaks are less likely to contaminate the entire
-               calibration window.
-\end{itemize}
-For purely quarterly series, practitioners may prefer to
-reduce $\Sper$ by grouping adjacent quarters into broader
-``seasons'' or to use a shorter rolling-window calibration.
+The requirement interacts directly with data frequency and
+structural stability.  For \emph{monthly} data ($\Sper = 12$), the
+threshold $T_s \gtrsim 30$ translates to $T \gtrsim 360$ months,
+30 years, which is achievable for standard macroeconomic series such
+as industrial production or price indices.  For \emph{quarterly} data
+($\Sper = 4$), the same $T_s$ threshold requires only
+$T \gtrsim 120$ quarters, again 30 years, though the assumption of
+structural stability over three decades is considerably harder to
+justify for quarterly aggregates such as GDP: the 2008--09 financial
+crisis and the 2020 COVID recession both constitute substantial
+regime shifts that can invalidate a calibration buffer spanning that
+horizon.  The practical implication is that \texttt{EnbPI-S} is most
+naturally suited to \emph{monthly or higher-frequency} data, where a
+large enough $T_s$ is reached within a single economic cycle, where
+seasonal het\-ero\-sked\-as\-tic\-ity is typically more pronounced
+(harvest and weather effects operate at the monthly scale), and where
+structural breaks are less likely to contaminate the entire
+calibration window.  For purely quarterly series, practitioners may
+prefer to reduce $\Sper$ by grouping adjacent quarters into broader
+``seasons'', or to use a shorter rolling-window calibration.
 
-\paragraph{Fixed seasonal period.}
-The current framework assumes a known, fixed seasonal period
-$\Sper$.  In practice, the relevant cycle may be quarterly
-($\Sper = 4$), weekly ($\Sper = 52$), or irregular (e.g.\
-fiscal years that do not align with calendar years).  The
-algorithm extends immediately to any integer $\Sper$, but
-selection of $\Sper$ is left to the practitioner.
+The framework also assumes a known, fixed seasonal period $\Sper$.
+In practice the relevant cycle may be quarterly ($\Sper = 4$),
+weekly ($\Sper = 52$), or irregular, as with fiscal years that do
+not align with calendar years.  The algorithm extends immediately to
+any integer $\Sper$, but the selection of $\Sper$ is left to the
+practitioner.
 
-\paragraph{Structural breaks.}
-The sliding-window update adapts to slow drift in the
-seasonal volatility structure, but it is not designed to
-handle abrupt structural breaks.  Part of the coverage
-shortfall in the food-IPCA application plausibly reflects
-such a break: COVID-era (2020--22) inflation dynamics lie
-partly outside the support of the 1995--2014 training
-distribution.  Robust
-recalibration after detected breaks is an open problem.
+Structural breaks pose a further limitation.  The sliding-window
+update adapts to slow drift in the seasonal volatility structure,
+though it is not designed to handle abrupt breaks.  Part of the
+coverage shortfall in the food-IPCA application plausibly reflects
+such a break, since COVID-era inflation dynamics (2020--22) lie
+partly outside the support of the 1995--2014 training distribution.
+Robust recalibration after detected breaks remains an open problem.
 
 %------------------------------------------------------------
 \subsection{Future Directions}
 \label{sec:conclusion:future}
 %------------------------------------------------------------
 
-\paragraph{Combination with SPCI.}
 \citet{xu2023sequential} proposed SPCI, which exploits residual
-autocorrelation by training a quantile random forest on the
-history of residuals.  \texttt{EnbPI-S} and SPCI address
-orthogonal sources of miscoverage: SPCI corrects for serial
-dependence, \texttt{EnbPI-S} corrects for seasonal scale
-variation.  A combined method could apply the quantile-forest
-step within each seasonal buffer, potentially achieving both
-autocorrelation-adjusted and season-calibrated intervals.
-We leave the formalisation of such a combined estimator to
-future work.
+autocorrelation by training a quantile random forest on the history
+of residuals.  \texttt{EnbPI-S} and SPCI address orthogonal sources
+of miscoverage, since SPCI corrects for serial dependence and
+\texttt{EnbPI-S} corrects for seasonal scale variation.  A combined
+method could therefore apply the quantile-forest step within each
+seasonal buffer, potentially achieving intervals that are at once
+autocorrelation-adjusted and season-calibrated.  We leave the
+formalisation of such a combined estimator to future work.
 
-\paragraph{Adaptive stratum selection.}
-Rather than stratifying by the calendar month, one could
-stratify by a data-driven cluster of months with similar
-residual distributions.  A Gaussian mixture model or a
-$k$-means clustering of the monthly empirical quantile
-vectors would allow the number of strata to be chosen
-from data, trading off stratification bias against
-per-stratum sample size.
+Another direction is adaptive stratum selection.  Rather than
+stratifying by calendar month, one could stratify by a data-driven
+cluster of months with similar residual distributions; a Gaussian
+mixture model or a $k$-means clustering of the monthly empirical
+quantile vectors would allow the number of strata to be chosen from
+data, trading off stratification bias against per-stratum sample
+size.
 
-\paragraph{Coverage-corrected line search.}
-As documented in Experiment E2, the minimum-width line search
-can be unreliable for small $T_s$ due to the heavy tails of
-the empirical distribution.  A finite-sample correction (for instance, replacing the
-empirical quantile $Q_p$ by the conformally adjusted version
-$Q_{\lceil (T_s+1)p \rceil / T_s}$) would provide exact
-coverage guarantees at the cost of slightly wider intervals
-and merits further study.
+A third direction concerns the interior of the family~\eqref{eq:family}.
+Experiment E6 shows that blending the stratified endpoint towards the
+normalised one recovers about a tenth of the width that a finite-sample
+guarantee costs on a short buffer, at essentially unchanged coverage,
+but also that choosing the weight from data does not beat fixing it at
+one half.  A weight that is worth estimating would have to exploit
+something the cross-validated rule does not, most plausibly the fact
+that the seasons are not twelve unrelated problems: a hierarchical
+estimator that shrinks each season towards a common seasonal profile
+rather than towards the pooled buffer is the natural next step, and it
+is also the setting in which shrinkage across many related quantities
+has a theory to lean on.  Whether such an estimator can be given a
+finite-sample guarantee, given that the weight would be a function of
+the same residuals that form the buffer, is the harder half of that
+question.
 
-\paragraph{Beyond monthly seasonality.}
-The framework applies directly to quarterly, daily, or intraday
-seasonality by adjusting $\Sper$.  For high-frequency data
-with large $\Sper$ (e.g.\ hourly electricity demand with an
-annual cycle, $\Sper = 8760$), the per-stratum sample sizes would be
-very small and alternative grouping strategies would be
-necessary.  The theoretical analysis extends to this regime
-with minor adjustments to the DKW-based argument in
-Appendix~\ref{app:proofs}.
+Finally, the framework applies directly to quarterly, daily or
+intraday seasonality by adjusting $\Sper$.  For high-frequency data
+with large $\Sper$, as in hourly electricity demand with an annual
+cycle ($\Sper = 8760$), the per-stratum sample sizes would be very
+small and alternative grouping strategies would become necessary; the
+theoretical analysis extends to this regime with minor adjustments to
+the DKW-based argument in Appendix~\ref{app:proofs}.
+
+Beyond the specific algorithm, the broader lesson of the exercise is
+that, for seasonal economic series, the calibration step deserves at
+least as much attention as the point-forecast model: the
+SARIMA benchmark of Section~\ref{sec:simulations} loses more than
+twenty percentage points of coverage in its worst month even though
+its conditional mean closely approximates the true one.

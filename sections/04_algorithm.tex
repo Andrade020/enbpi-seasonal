@@ -1,34 +1,44 @@
 % ============================================================
-% SECTION 4 — THE EnbPI-S ALGORITHM
+% SECTION 4 - CONDITIONING THE CALIBRATION ON THE SEASON
 % ============================================================
-\section{The Stratified \texttt{EnbPI-S} Algorithm}
+\section{Conditioning the Calibration on the Season}
 \label{sec:algorithm}
 
-We now introduce \texttt{EnbPI-S}, the stratified version of EnbPI
-that eliminates the seasonal bias identified in
-Proposition~\ref{prop:pooled_gap}.  The key modification is surgical:
-the single calibration buffer of EnbPI is replaced by $\Sper$
+Proposition~\ref{prop:pooled_gap} says that a calibration buffer which
+ignores the season carries a bias that data cannot remove.  It does not
+say how the season should enter.  This section sets out the two ways of
+letting it enter that the literature suggests, shows that they are the
+two endpoints of a one-parameter family, and isolates two finite-sample
+defects that are easy to mistake for properties of seasonal calibration
+but belong to the calibration step of the original algorithm.
+
+The first way is stratification: replace the single buffer by $\Sper$
 parallel buffers, one per season, so that each interval is calibrated
 exclusively on residuals drawn from the same seasonal distribution as
-the prediction target.
+the prediction target.  This is \texttt{EnbPI-S}, described in
+Section~\ref{sec:algorithm:description}.  The second is normalisation:
+divide each residual by an estimate of its own season's scale and
+calibrate on the pooled buffer of standardised residuals, rescaling the
+result by the scale of the target season.  This is the seasonal
+counterpart of normalised conformal prediction
+\citep{dewolf2025conditional} and is described in
+Section~\ref{sec:algorithm:normalised}.  Section~\ref{sec:algorithm:family}
+combines them.
 
 %------------------------------------------------------------
 \subsection{Algorithm Description}
 \label{sec:algorithm:description}
 %------------------------------------------------------------
 
-\texttt{EnbPI-S} inherits the training phase of
-Algorithm~1 in \citet{xu2023conformal} without change.
-All $B$ bootstrap models are fitted once on the full training set,
-and all $T$ LOO residuals are computed as in
-Section~\ref{sec:model:enbpi}.  The only modification
+\texttt{EnbPI-S} inherits the training phase of Algorithm~1 in
+\citet{xu2023conformal} without change.  All $B$ bootstrap models are
+fitted once on the full training set, and all $T$ LOO residuals are
+computed as in Section~\ref{sec:model:enbpi}.  The only modification
 concerns how residuals are stored and used during prediction.
 
-\paragraph{Stratified buffer initialisation.}
-At the end of the training phase, instead of collecting all $T$
-LOO residuals into a single ordered multiset
-$\hat{\boldsymbol\epsilon}$, we assign each residual to its
-season-specific buffer:
+At the end of the training phase, instead of collecting all $T$ LOO
+residuals into a single ordered multiset $\hat{\boldsymbol\epsilon}$,
+each residual is assigned to its season-specific buffer:
 \[
   \hat{\boldsymbol\epsilon}^{(s)}
   \;=\;
@@ -36,19 +46,18 @@ season-specific buffer:
   \qquad s = 1, \ldots, \Sper,
 \]
 where $\calT_s = \{t \in [T]: s(t) = s\}$ is the stratum of
-season $s$ (Definition~\ref{def:season}).
-Each buffer $\hat{\boldsymbol\epsilon}^{(s)}$ has cardinality
+season $s$ (Definition~\ref{def:season}), and each buffer
+$\hat{\boldsymbol\epsilon}^{(s)}$ has cardinality
 $T_s = |\calT_s|$.
 
-\paragraph{Prediction.}
-At test time $t > T$ with season $\sstar = s(t)$, the point
-forecast is computed identically to EnbPI:
+At test time $t > T$ with season $\sstar = s(t)$, the point forecast
+is computed exactly as in EnbPI,
 \[
   \hat{f}_{-t}^{\,\phi}(x_t)
   \;=\;
-  \phi\!\bigl(\hat{f}_{-i}^{\,\phi}(x_t) : i = 1,\ldots,T\bigr).
+  \phi\!\bigl(\hat{f}_{-i}^{\,\phi}(x_t) : i = 1,\ldots,T\bigr),
 \]
-The line search for the optimal lower quantile level now uses
+whereas the line search for the optimal lower quantile level now uses
 only the season-$\sstar$ buffer:
 \begin{equation}
   \label{eq:betahat_strat}
@@ -74,10 +83,9 @@ The stratified prediction interval is then:
   \Bigr].
 \end{equation}
 
-\paragraph{Sliding window update.}
 Every $s_0 \geq 1$ steps, once observations $\{y_j\}_{j=t-s_0}^{t-1}$
-become available, only the buffer corresponding to their season
-is updated.  For each revealed observation $y_j$ at season
+become available, only the buffer corresponding to their season is
+updated.  For each revealed observation $y_j$ at season
 $s_j = s(j)$:
 \begin{equation}
   \label{eq:slide_strat}
@@ -93,12 +101,11 @@ $s_j = s(j)$:
   \qquad
   \hat{\epsilon}_j = y_j - \hat{f}_{-j}^{\,\phi}(x_j).
 \end{equation}
-Buffers for other seasons are untouched.  After the update,
-each buffer maintains its original size $T_{s_j}$, so the
-effective calibration history for each season grows at rate
-$1/\Sper$ relative to the passage of time.
-
-The complete algorithm is given in Algorithm~\ref{alg:enbpis}.
+Buffers for other seasons are untouched.  After the update, each
+buffer maintains its original size $T_{s_j}$, so that the effective
+calibration history for each season grows at rate $1/\Sper$ relative
+to the passage of time.  The complete procedure is given in
+Algorithm~\ref{alg:enbpis}.
 
 %------------------------------------------------------------
 \begin{algorithm}[t]
@@ -174,85 +181,228 @@ $\hat{\boldsymbol\epsilon}^{(1)}, \ldots, \hat{\boldsymbol\epsilon}^{(\Sper)}$\;
 \label{sec:algorithm:properties}
 %------------------------------------------------------------
 
-\paragraph{Computational cost.}
-\texttt{EnbPI-S} incurs negligible additional cost relative to
-EnbPI.  The training phase is identical.  In the prediction phase,
-the only change is that the line search~\eqref{eq:betahat_strat}
-and the quantile evaluations are performed on a buffer of size
-$T_{\sstar} \approx T/\Sper$ rather than $T$.  For $\Sper = 12$
-and the typical batch size $s_0 = 1$, this reduces each step's
-cost by a factor of $\Sper$.  The total memory for
-$\Sper$ buffers is still $T$ residuals.
+The computational cost of \texttt{EnbPI-S} is negligibly different
+from that of EnbPI.  The training phase is identical; in the
+prediction phase, the only change is that the line
+search~\eqref{eq:betahat_strat} and the quantile evaluations are
+performed on a buffer of size $T_{\sstar} \approx T/\Sper$ rather
+than $T$, so that for $\Sper = 12$ and the typical batch size
+$s_0 = 1$ each step becomes cheaper by a factor of $\Sper$.  The
+total memory required for the $\Sper$ buffers is still $T$ residuals.
 
-\paragraph{No data splitting.}
-As in EnbPI, \texttt{EnbPI-S} requires no data splitting: all
-$T$ training observations are used to fit the $B$ bootstrap
-models, and all $T$ LOO residuals are used to populate the $\Sper$
-stratified buffers.  This stands in contrast to Mondrian CP for
-i.i.d.\ data \citep{vovk2005mondrian,dewolf2025conditional},
-where the calibration set must be divided among the $\Sper$ classes,
-reducing the effective calibration size to $T/\Sper$ per class.
-In \texttt{EnbPI-S}, the training set is shared across seasons via
-the LOO ensemble, while only the residual calibration is stratified.
+No data splitting is needed either.  As in EnbPI, all $T$ training
+observations are used to fit the $B$ bootstrap models, and all $T$
+LOO residuals are used to populate the $\Sper$ stratified buffers.
+This stands in contrast to Mondrian CP for i.i.d.\ data
+\citep{vovk2005mondrian,dewolf2025conditional}, where the calibration
+set must be divided among the $\Sper$ classes, which reduces the
+effective calibration size to $T/\Sper$ per class.  In
+\texttt{EnbPI-S} the training set is shared across seasons through
+the LOO ensemble, and only the residual calibration is stratified.
 
-\paragraph{Season-adaptive asymmetry.}
-The line search~\eqref{eq:betahat_strat} selects an
-\emph{optimal asymmetric quantile pair} $(\hat{\beta}^{(\sstar)},
+The asymmetry of the interval is also season-adaptive.  The line
+search~\eqref{eq:betahat_strat} selects an \emph{optimal asymmetric
+quantile pair} $(\hat{\beta}^{(\sstar)},
 1-\alpha+\hat{\beta}^{(\sstar)})$ tailored to the empirical
 distribution of season-$\sstar$ residuals.  For seasons in which
-forecast errors are right-skewed (e.g.\ large positive surprises
-dominate, as in January for the IPCA), the optimiser will select
-$\hat{\beta}^{(\sstar)} < \alpha/2$, producing a left-asymmetric
-interval.  This adapts to distributional shape, not just scale.
+forecast errors are right-skewed, as happens in January for the IPCA,
+where large positive surprises dominate, the optimiser selects
+$\hat{\beta}^{(\sstar)} < \alpha/2$ and produces a left-asymmetric
+interval, adapting to distributional shape and not only to scale.
+Section~\ref{sec:algorithm:defects} shows that this adaptation is not
+free once the buffer is short.
 
-\paragraph{Slide rule.}
-The update rule~\eqref{eq:slide_strat} ensures that each
+Finally, the update rule~\eqref{eq:slide_strat} ensures that each
 season-$s$ buffer always contains the $T_s$ most recent residuals
-from season $s$.  As a result, \texttt{EnbPI-S} tracks potential
-slow drift in $\sigma_s$ over time (e.g.\ structural changes in
-seasonal volatility patterns), while being robust to contamination
-from other seasons.
+from season $s$.  \texttt{EnbPI-S} therefore tracks potential slow drift in
+$\sigma_s$ over time, such as structural changes in seasonal
+volatility patterns, while remaining robust to contamination from
+other seasons.
+
+%------------------------------------------------------------
+\subsection{Normalisation as the Other Endpoint}
+\label{sec:algorithm:normalised}
+%------------------------------------------------------------
+
+Stratification spends the seasonal information generously: it estimates
+$\Sper$ complete distributions, one per season, from $\Ts$ observations
+each.  Under Assumption~\ref{ass:seasonal} that is more than the problem
+requires, since the seasons then share a shape and differ only in scale,
+so $\Sper$ numbers suffice.  Let $\hat{\sigma}_s$ be a scale estimate
+computed from the season-$s$ residuals, and let
+\begin{equation}
+  \label{eq:normalised_buffer}
+  \hat{z}_t \;=\; \frac{\hat{\epsilon}_t}{\hat{\sigma}_{s(t)}},
+  \qquad t = 1,\ldots,T,
+\end{equation}
+be the pooled buffer of standardised residuals.  The normalised scheme,
+which we call \texttt{EnbPI-N}, runs the line search on
+$\hat{\boldsymbol z}$ and multiplies the resulting offsets by
+$\hat{\sigma}_{\sstar}$:
+\begin{equation}
+  \label{eq:enbpin_interval}
+  \hat{C}_t^{\,\alpha,\textup{norm}}
+  =
+  \Bigl[
+    \hat{f}_{-t}^{\,\phi}(x_t)
+    + \hat{\sigma}_{\sstar}\Quant{\hat{\beta}}{\hat{\boldsymbol z}},\;
+    \hat{f}_{-t}^{\,\phi}(x_t)
+    + \hat{\sigma}_{\sstar}\Quant{1-\alpha+\hat{\beta}}{\hat{\boldsymbol z}}
+  \Bigr].
+\end{equation}
+All $T$ residuals inform the shape and only $\Ts$ inform the scale, which
+is the whole of the difference between the two schemes.  We use the median
+absolute deviation divided by $\Phi^{-1}(0.75)$ for
+$\hat{\sigma}_s$, since the residual distributions in our applications are
+heavy-tailed, and freeze the scales at the end of the training phase.
+
+If Assumption~\ref{ass:seasonal} holds, \texttt{EnbPI-N} removes the bias
+of Proposition~\ref{prop:pooled_gap} just as stratification does, and it
+does so from a longer buffer.  If it fails, that is, if seasons differ in
+shape and not only in scale, the standardised residuals are still not
+identically distributed, and normalisation leaves a discrepancy behind.
+Write
+\begin{equation}
+  \label{eq:shape_discrepancy}
+  \Delta_{\sstar}(p)
+  \;:=\;
+  \sigma_{\sstar}G_z^{-1}(p) - F_{\sstar}^{-1}(p),
+\end{equation}
+where $G_z$ is the CDF of the standardised errors pooled across seasons.
+Under Assumption~\ref{ass:seasonal}, $\Delta_{\sstar}(p) = 0$ for every
+season and every level; in general it does not vanish, and it is the
+quantity that decides which of the two schemes is appropriate.
+
+%------------------------------------------------------------
+\subsection{One Family, Two Endpoints}
+\label{sec:algorithm:family}
+%------------------------------------------------------------
+
+The two schemes estimate the same object, the season-$\sstar$ residual
+quantile at level $p$, and nothing forces a choice between the estimates.
+Write $\hat{\theta}^{S}(p)$ for the stratified estimate, the empirical
+$p$-quantile of $\hat{\boldsymbol\epsilon}^{(\sstar)}$, and
+$\hat{\theta}^{N}(p) = \hat{\sigma}_{\sstar}\Quant{p}{\hat{\boldsymbol z}}$
+for the normalised one, and define, for $\lambda \in [0,1]$,
+\begin{equation}
+  \label{eq:family}
+  \hat{\theta}^{\lambda}(p)
+  \;=\;
+  \lambda\,\hat{\theta}^{S}(p)
+  \;+\;
+  (1-\lambda)\,\hat{\theta}^{N}(p).
+\end{equation}
+The interval is built from $\hat{\theta}^{\lambda}$ exactly as before, with
+a single line search run on the combined quantile function so that the
+asymmetry is selected once rather than inherited from either scheme.
+Setting $\lambda = 1$ returns \texttt{EnbPI-S} and $\lambda = 0$ returns
+\texttt{EnbPI-N}, so the family contains both, and the question of which
+scheme to use becomes the question of where in $[0,1]$ to sit.
+
+Composing the two corrections rather than interpolating them would
+achieve nothing: standardising the residuals of a season by a constant and
+then multiplying the quantiles of that same season back by it returns the
+stratified interval unchanged.  Only a genuine interpolation moves between
+the two.
+
+%------------------------------------------------------------
+\subsection{Two Defects That Are Not About Seasons}
+\label{sec:algorithm:defects}
+%------------------------------------------------------------
+
+Before the family can be assessed, two properties of the calibration step
+have to be separated from the seasonal question, because both punish short
+buffers and the stratified scheme is the one with short buffers.
+
+The first is the inward bias of extreme empirical quantiles.  The
+empirical $p$-quantile of $\Ts$ residuals cannot fall outside the range of
+those residuals, so for $p$ near one it is biased downwards and for $p$
+near zero upwards.  At $\Ts = 20$ and $\alpha = 0.10$ the bias is not
+small: Section~\ref{sec:simulations:e6constr} measures it at $+0.28$ and $-0.35$
+at the two ends in one of our designs, comparable in magnitude to the
+seasonal discrepancy the calibration is trying to capture.  The standard
+remedy is the finite-sample conformal endpoint, and it is worth stating in
+the form in which it is meant to be used, as an \emph{order statistic}
+rather than as a quantile level: for a buffer of size $n$ sorted as
+$\hat{\epsilon}_{(1)} \leq \cdots \leq \hat{\epsilon}_{(n)}$, the upper
+endpoint is $\hat{\epsilon}_{(k_{\text{hi}})}$ with
+$k_{\text{hi}} = \lceil (n+1)(1-\alpha/2)\rceil$ and the lower endpoint is
+$\hat{\epsilon}_{(k_{\text{lo}})}$ with
+$k_{\text{lo}} = \lfloor (n+1)\alpha/2 \rfloor$.  Handing the ratio $k/n$
+to an interpolating quantile function is a different object, and it undoes
+most of the correction at the lower end, where $k$ is one or two.  The two
+indices exist only for $n \geq 2/\alpha - 1$ and fall strictly inside the
+sample only for $n \geq 4/\alpha - 1$;
+Section~\ref{sec:simulations:e6constr} works out what happens between the two.
+
+The second is a selection effect in the line search itself.  The optimiser
+picks the narrowest of $m$ candidate quantile pairs, all computed from the
+same residuals, and the narrowest of many noisy candidates is narrower than
+it should be.  The bias grows with $m$ and shrinks with the buffer length,
+so it is invisible on a pooled buffer of $T - p$ residuals and material on
+a season buffer of $\Ts$.  Section~\ref{sec:simulations:e6constr} measures between four
+and six percentage points of coverage at $\Ts$ between $20$ and $50$,
+against under half a percentage point at $n = 500$.  This is a property of the
+original algorithm, not of its seasonal variant, but it lands on the
+seasonal variant.
+
+Neither defect has anything to do with the seasonal bias of
+Proposition~\ref{prop:pooled_gap}, and neither is repaired by choosing
+$\lambda$ well.  Both are repaired directly, by taking the conformal order
+statistics and by fixing $\beta = \alpha/2$ when the buffer is short, and
+the experiments of Section~\ref{sec:simulations} report the family with
+both repairs in place.  Experiment E6 shows that the repairs matter more
+than the choice of $\lambda$: with them, a season-specific interval
+attains its nominal level at $\Ts = 20$, which is the sample size at which
+the literature, and the earlier sections of this paper, report
+stratification as too expensive to use.
 
 %------------------------------------------------------------
 \subsection{Relation to Existing Methods}
 \label{sec:algorithm:relation}
 %------------------------------------------------------------
 
-\paragraph{Relation to Mondrian CP.}
-Mondrian conformal prediction \citep{vovk2005mondrian} stratifies
-the calibration set of an inductive conformal predictor by a
-categorical label $\kappa(x, y)$, guaranteeing that the resulting
-intervals are conditionally valid within each category under
-exchangeability.  \texttt{EnbPI-S} can be viewed as the
+According to \citet{vovk2005mondrian}, Mondrian conformal prediction
+stratifies the calibration set of an inductive conformal predictor by
+a categorical label $\kappa(x, y)$, which guarantees that the
+resulting intervals are conditionally valid within each category
+under exchangeability.  \texttt{EnbPI-S} can be viewed as the
 non-exchangeable time-series analogue of Mondrian CP with
-$\kappa(x_t, y_t) = s(t)$ (calendar season).  Unlike Mondrian CP,
-\texttt{EnbPI-S} operates without data splitting (the bootstrap
-training uses all observations) and provides
-coverage guarantees under temporal dependence.
+$\kappa(x_t, y_t) = s(t)$, the calendar season.  Unlike Mondrian CP,
+it operates without data splitting, since the bootstrap training uses
+all observations, and provides coverage guarantees under temporal
+dependence.
 
-\paragraph{Relation to SPCI.}
-The \emph{Sequential Predictive Conformal Inference} algorithm
-\citep{xu2023sequential} constructs prediction intervals by
-estimating the conditional quantile of the next residual via
-a quantile random forest trained on past residuals.  SPCI
-exploits serial correlation in residuals to produce narrower
-intervals when residuals are autocorrelated.  \texttt{EnbPI-S}
-and SPCI address complementary sources of miscoverage:
-SPCI corrects for residual autocorrelation; \texttt{EnbPI-S}
-corrects for seasonal heteroskedasticity.  The two approaches
-are compatible and can in principle be combined
-(see Section~\ref{sec:conclusion}).
+The \emph{Sequential Predictive Conformal Inference} algorithm of
+\citet{xu2023sequential} constructs prediction intervals by
+estimating the conditional quantile of the next residual through a
+quantile random forest trained on past residuals; SPCI exploits
+serial correlation in residuals to produce narrower intervals
+whenever residuals are autocorrelated.  \texttt{EnbPI-S} and SPCI
+address complementary sources of miscoverage, since SPCI corrects for
+residual autocorrelation while \texttt{EnbPI-S} corrects for seasonal
+heteroskedasticity, so that the two approaches are compatible and can
+in principle be combined (see Section~\ref{sec:conclusion}).
 
-\paragraph{Relation to normalised CP.}
 \citet{dewolf2025conditional} show that, for i.i.d.\ data from a
-location-scale family, normalised CP (which divides each residual
-by an estimate of $\sigma(x)$) achieves conditional validity
-without Mondrian stratification.  In our setting,
-if the prediction algorithm $\calA$ includes explicit seasonal
-dummy variables, it may implicitly estimate $\hat{\sigma}(x)
-\approx \sigma_{s(t)}$, in which case the normalised residuals
-would be approximately pivotal and pooled calibration would
-suffice.  \texttt{EnbPI-S} is designed for the realistic case
-where such normalisation is either infeasible (model-free
-predictors) or imperfect, providing a clean and model-agnostic
-remedy.
+location-scale family, normalised CP, which divides each residual by
+an estimate of $\sigma(x)$, achieves conditional validity without
+Mondrian stratification.  That result has a direct seasonal
+counterpart: under Assumption~\ref{ass:seasonal} the standardised
+errors $\epsilon_t/\sigma_{s(t)}$ are identically distributed, so a
+scheme that divides each residual by an estimate of
+$\sigma_{s(t)}$ and calibrates on the pooled standardised buffer also
+removes the bias of Proposition~\ref{prop:pooled_gap}, and does so
+while spending only $\Sper$ parameters on the seasonal structure.
+Experiment E7 in Section~\ref{sec:simulations:e7schemes} implements that
+competitor, called \texttt{EnbPI-N}, and finds it the more efficient of
+the two whenever the scale-mixture restriction holds, delivering a
+comparable coverage level from a narrower interval.  The case for
+stratification is therefore not that it dominates normalisation, but
+that it does not depend on the restriction:
+Assumption~\ref{ass:seasonal} is a modelling choice, and when seasons
+differ in the shape of the error distribution rather than in its scale,
+a scale correction has nothing to correct while stratification still
+equalises coverage.  Experiment E6 quantifies that case as well, and
+Section~\ref{sec:empirical:choice} tests which of the two
+configurations the Brazilian data resemble.

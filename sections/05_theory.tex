@@ -1,17 +1,19 @@
 % ============================================================
-% SECTION 5 — THEORETICAL RESULTS
+% SECTION 5 - THEORETICAL RESULTS
 % ============================================================
 \section{Theoretical Results}
 \label{sec:theory}
 
-This section contains the main theoretical contributions of the paper.
-Section~\ref{sec:theory:assumptions} states the within-stratum
-assumptions for \texttt{EnbPI-S}.  Section~\ref{sec:theory:main}
-presents the stratified coverage bound (Theorem~\ref{thm:strat_coverage}).
-Section~\ref{sec:theory:marginal} states the corresponding marginal
-result.  Section~\ref{sec:theory:dominance} derives the condition
-under which \texttt{EnbPI-S} outperforms pooled EnbPI.  All proofs
-are deferred to Appendix~\ref{app:proofs}.
+This section contains the main theoretical contributions of the
+paper.  The within-stratum assumptions for \texttt{EnbPI-S} are
+stated in Section~\ref{sec:theory:assumptions}; the stratified
+coverage bound (Theorem~\ref{thm:strat_coverage}) is presented in
+Section~\ref{sec:theory:main} and the corresponding marginal result
+in Section~\ref{sec:theory:marginal}; and
+Section~\ref{sec:theory:dominance} derives the condition under which
+\texttt{EnbPI-S} outperforms pooled EnbPI.  Proofs are in
+Appendix~\ref{app:proofs}, except for the short ones given in place
+here and in Section~\ref{sec:model:seasonal}.
 
 %------------------------------------------------------------
 \subsection{Within-Stratum Assumptions}
@@ -48,10 +50,11 @@ There exists a real sequence $\{\deltaTs\}_{T \geq 1}$
 \begin{remark}[Relationship between assumptions]
 \label{rem:assumption_nesting}
 Assumption~\ref{ass:strat_a1} follows directly from
-Assumption~\ref{ass:seasonal}: under the seasonal model
-$\epsilon_t = \sigma_{\sstar}\eta_t$ with $\eta_t$ i.i.d.\
-from $G$ (Assumption~\ref{ass:seasonal}), all errors at
-season $\sstar$ are i.i.d.\ from $F_{\sstar} = G(\cdot/\sigma_{\sstar})$.
+Assumption~\ref{ass:seasonal_general}, which already states that the
+errors of a given season are independent and identically distributed
+according to a Lipschitz $F_{\sstar}$; the scale-mixture structure of
+Assumption~\ref{ass:seasonal} is not needed, and under it
+$F_{\sstar} = G(\cdot/\sigma_{\sstar})$.
 Assumption~\ref{ass:strat_a2} is implied by
 Assumption~\ref{ass:xu_a2}: if the average MSE over all $T$
 training points is at most $\delta_T^2$, then the average
@@ -111,51 +114,43 @@ validity} for every season $\sstar \in \{1,\ldots,\Sper\}$.
 
 \begin{remark}[Comparison with Theorem~\ref{thm:xu_original}]
 \label{rem:compare_theorems}
-Theorem~\ref{thm:strat_coverage} and Theorem~\ref{thm:xu_original}
-(the original result of \citealt{xu2023conformal}) have the same
-functional form: both bound the conditional coverage gap by the
-sum of a DKW-type sampling term and an estimation quality term.
-The critical difference is:
-\begin{enumerate}
-  \item Theorem~\ref{thm:xu_original} uses $T$ (total training
-    observations) and $\deltaT$; Theorem~\ref{thm:strat_coverage}
-    uses $\Ts = T/\Sper$ and $\deltaTs$.  The stratified bound
-    converges at the slower rate $O(\sqrt{\Sper}\cdot T^{-1/2})$
-    due to the smaller effective sample size $\Ts = T/\Sper$.
-
-  \item Theorem~\ref{thm:xu_original} is \emph{only valid} when
-    Assumption~\ref{ass:xu_a1} holds (common CDF for all errors),
-    which fails under seasonal heteroskedasticity.
-    Proposition~\ref{prop:pooled_gap} adds the seasonal bias
-    $2\bsstar$ (and adjusts the sampling constant) on the
-    right-hand side of Theorem~\ref{thm:xu_original}, yielding a
-    bound that is valid but does
-    not converge to zero.  Theorem~\ref{thm:strat_coverage} has
-    no such persistent term.
-\end{enumerate}
+Theorem~\ref{thm:strat_coverage} and Theorem~\ref{thm:xu_original},
+the original result of \citet{xu2023conformal}, have the same
+functional form, since both bound the conditional coverage gap by
+the sum of a DKW-type sampling term and an estimation quality term.
+They differ on two counts.  First, Theorem~\ref{thm:xu_original}
+uses $T$, the total number of training observations, and $\deltaT$,
+whereas Theorem~\ref{thm:strat_coverage} uses $\Ts = T/\Sper$ and
+$\deltaTs$, so that the stratified bound converges at the slower
+rate $O(\sqrt{\Sper}\cdot T^{-1/2})$, a consequence of the smaller
+effective sample size.  Second, Theorem~\ref{thm:xu_original} is
+\emph{only valid} when Assumption~\ref{ass:xu_a1} holds, that is,
+when all errors share a common CDF, which fails under seasonal
+heteroskedasticity; Proposition~\ref{prop:pooled_gap} adds the
+seasonal bias $2\bsstar$ to the right-hand side of
+Theorem~\ref{thm:xu_original}, and adjusts the sampling constant,
+yielding a bound that is valid but does not converge to zero.
+Theorem~\ref{thm:strat_coverage} has no such persistent term.
 \end{remark}
 
 \begin{remark}[Extension to dependent within-stratum errors]
 \label{rem:mixing}
 Assumption~\ref{ass:strat_a1} can be relaxed exactly as in
-\citet[Corollaries~1--2]{xu2023conformal}:
-\begin{itemize}
-  \item If within-stratum errors follow a linear process,
-    the DKW term becomes $O(\log \Ts / \sqrt{\Ts})$.
-  \item If within-stratum errors are strongly mixing with
-    summable mixing coefficients, the term becomes
-    $O((\log \Ts)^{2/3} / \Ts^{1/3})$.
-\end{itemize}
+\citet[Corollaries~1--2]{xu2023conformal}: if within-stratum errors
+follow a linear process, the DKW term becomes
+$O(\log \Ts / \sqrt{\Ts})$; if they are strongly mixing with
+summable mixing coefficients, it becomes
+$O((\log \Ts)^{2/3} / \Ts^{1/3})$.
 The within-stratum errors $\{\epsilon_t : t \in \calT_{\sstar}\}$
-are spaced $\Sper$ time steps apart.  If the original process
-is $\alpha_n$-mixing, the sub-sampled process has mixing
+are spaced $\Sper$ time steps apart, so that, if the original
+process is $\alpha_n$-mixing, the sub-sampled process has mixing
 coefficients bounded by $\alpha_{\Sper}, \alpha_{2\Sper}, \ldots$
 (Proposition~\ref{prop:submixing} in Appendix~\ref{app:proofs}).
-For most economic time series, $\Sper = 12$ is large enough that
-the within-stratum errors are approximately i.i.d., making
-Assumption~\ref{ass:strat_a1} a reasonable working hypothesis.
-The autocorrelation function of the within-stratum LOO residuals
-can be used as a diagnostic (cf.\ \citealt{xu2023conformal}).
+For most economic time series $\Sper = 12$ is large enough that the
+within-stratum errors are approximately i.i.d., which makes
+Assumption~\ref{ass:strat_a1} a reasonable working hypothesis; the
+autocorrelation function of the within-stratum LOO residuals can be
+used as a diagnostic (cf.\ \citealt{xu2023conformal}).
 \end{remark}
 
 %------------------------------------------------------------
@@ -263,18 +258,16 @@ $\deltaT \to 0$ as $T \to \infty$.  Then:
   Lemma~\ref{lem:bias_properties}(iii).
 \end{proof}
 
-\paragraph{Finite-sample trade-off.}
-Proposition~\ref{prop:strat_dominance} is asymptotic.  For finite $T$,
-there is a genuine trade-off: stratification removes the
-persistent bias $2\bsstar$ but increases the sampling term
-(from $O(\sqrt{\log T / T})$ to $O(\sqrt{S\log T / T})$) by
-a factor of $\sqrt{\Sper}$.  Stratification is preferred over
-pooling for a given season $\sstar$ when the bias dominates the
-additional sampling variance.  Since the pooled sampling and
-estimation terms are nonnegative (and $L \geq L_{\sstar}$), a
-conservative sufficient condition for the stratified
-bound~\eqref{eq:strat_bound} to be smaller than the pooled
-bound~\eqref{eq:pooled_gap} is:
+Proposition~\ref{prop:strat_dominance} is asymptotic, and for finite
+$T$ there is a genuine trade-off, since stratification removes the
+persistent bias $2\bsstar$ but increases the sampling term by a
+factor of $\sqrt{\Sper}$, from $O(\sqrt{\log T / T})$ to
+$O(\sqrt{S\log T / T})$.  Stratification is preferred over pooling
+for a given season $\sstar$ when the bias dominates the additional
+sampling variance.  Since the pooled sampling and estimation terms
+are nonnegative, and $L \geq L_{\sstar}$, a conservative sufficient
+condition for the stratified bound~\eqref{eq:strat_bound} to be
+smaller than the pooled bound~\eqref{eq:pooled_gap} is:
 \begin{equation}
   \label{eq:dominance_condition}
   2\bsstar \;>\;
@@ -284,8 +277,8 @@ bound~\eqref{eq:pooled_gap} is:
         - \bigl(\deltaT^{2/3} + \deltaT\bigr)\right],
 \end{equation}
 where the right-hand side is positive whenever
-$\deltaTs \geq \deltaT$ (the typical case, since the stratum
-uses fewer observations).
+$\deltaTs \geq \deltaT$, which is the typical case, given that the
+stratum uses fewer observations.
 
 \begin{remark}[Practical applicability of condition~\eqref{eq:dominance_condition}]
 \label{rem:dominance_practical}
@@ -297,23 +290,26 @@ $\Ts = 10$ and the first term on the right-hand side of
   = 12\sqrt{\frac{\ln(160)}{10}}
   \approx 12 \times 0.713 \approx 8.55,
 \]
-which alone exceeds $2$ (twice the maximum possible value of
-$\bsstar$); the condition therefore cannot be satisfied at
-$T = 120$.  This is unsurprising: worst-case bounds of this
-type are far from tight at such small stratum sizes, so the
-bounds alone cannot adjudicate between methods at $T = 120$;
-the asymptotic comparison in
-Proposition~\ref{prop:strat_dominance} is more informative.
-For the food-IPCA application with $T = 240$ months of training
-data ($\Ts = 20$), a seasonal bias of the magnitude illustrated
-in Section~\ref{sec:model:seasonal} ($b_H \approx 0.12$ in the
-Gaussian example) is a fixed quantity that does not shrink with
-$T$, while the sampling terms do.  The simulation in
-Section~\ref{sec:simulations} shows that \texttt{EnbPI-S}
-achieves better high-volatility conditional coverage than
-pooled EnbPI from $T = 240$ months onwards
-(Table~\ref{tab:e1_coverage_T240}), validating the asymptotic
-theory at moderate sample sizes.
+which alone exceeds $2$, twice the maximum possible value of
+$\bsstar$, so that the condition cannot be satisfied at $T = 120$.
+The difficulty is not confined to that sample size.  Ignoring the
+estimation terms, \eqref{eq:dominance_condition} requires
+$\Ts > 36\,\bsstar^{-2}\log(16\Ts)$, so even the largest conceivable
+bias, $\bsstar = 1$, would call for $\Ts \approx 300$ observations
+per season, and the value $b_H \approx 0.12$ of the Gaussian example
+in Section~\ref{sec:model:seasonal} would call for $\Ts$ of the order
+of $10^{4}$.  No economic time series comes close.  Condition
+\eqref{eq:dominance_condition} should therefore be read as a
+qualitative statement about which term dominates, and not as a
+threshold to be checked in an application; the same reservation
+applies to the bound of \citet[Theorem~1]{xu2023conformal} itself,
+whose right-hand side exceeds one at every sample size used in this
+paper.  What the finite-sample comparison can be based on is
+simulation, and Section~\ref{sec:simulations} shows that
+\texttt{EnbPI-S} achieves better high-volatility conditional coverage
+than pooled EnbPI from $T = 240$ months onwards
+(Table~\ref{tab:e1_coverage_T240}), in the direction predicted by
+Proposition~\ref{prop:strat_dominance}.
 \end{remark}
 
 %------------------------------------------------------------
@@ -332,7 +328,7 @@ $K_{\sstar} > 0$.  With probability at least
 $1 - \sqrt{\log(16\Ts)/\Ts}$:
 \begin{equation}
   \label{eq:width_bound}
-  \Delta_{\sstar}(T)
+  \mathcal{D}_{\sstar}(T)
   \;\leq\;
   \deltaTs
   + \frac{\alpha K'_{\sstar}}{m}
@@ -344,7 +340,7 @@ $1 - \sqrt{\log(16\Ts)/\Ts}$:
 \end{equation}
 where:
 \begin{itemize}
-  \item $\Delta_{\sstar}(T) = \lambda\bigl(\hat{C}_{T+1}^{\alpha,\textup{strat}}
+  \item $\mathcal{D}_{\sstar}(T) = \lambda\bigl(\hat{C}_{T+1}^{\alpha,\textup{strat}}
     \triangle C_{T+1}^{\alpha}\bigr)$ is the Lebesgue measure
     $\lambda$ of the symmetric difference between the stratified
     and oracle intervals;
@@ -376,5 +372,226 @@ where:
   $\hat{C}_{T+1}^{\alpha,\textup{strat}}$ converges in width
   to the oracle $C_{T+1}^{\alpha}$ for season $\sstar$.  The
   convergence rate is determined by $\Ts = T/\Sper$, with the
-  same functional form as for the non-seasonal case.
+  same functional form as in the non-seasonal case.
+\end{remark}
+
+%------------------------------------------------------------
+\subsection{The Finite-Sample Guarantee of the Conformal Construction}
+\label{sec:theory:finite}
+%------------------------------------------------------------
+
+Theorem~\ref{thm:strat_coverage} is asymptotic, and its right-hand side
+exceeds one at every sample size this paper works with.  The
+construction that Section~\ref{sec:algorithm:defects} recommends admits
+a stronger and much simpler statement, which is what the experiments of
+Section~\ref{sec:simulations:e6constr} actually measure, and it is
+worth recording because the argument is two lines and the result is
+exact.
+
+\begin{proposition}[Exact validity of the conformal endpoints]
+\label{prop:finite_sample}
+Let $\epsilon_1, \ldots, \epsilon_{n}, \epsilon_{n+1}$ be exchangeable
+with a continuous joint distribution, write
+$\epsilon_{(1)} \leq \cdots \leq \epsilon_{(n)}$ for the order
+statistics of the first $n$, and set
+$k_{\text{lo}} = \lfloor (n+1)\alpha/2 \rfloor$ and
+$k_{\text{hi}} = \lceil (n+1)(1-\alpha/2) \rceil$.  If
+$1 \leq k_{\text{lo}}$ and $k_{\text{hi}} \leq n$, then
+\begin{equation}
+  \label{eq:exact_coverage}
+  1 - \alpha
+  \;\leq\;
+  \Prob\bigl(\epsilon_{(k_{\text{lo}})} \leq \epsilon_{n+1}
+             \leq \epsilon_{(k_{\text{hi}})}\bigr)
+  \;\leq\;
+  1 - \alpha + \frac{2}{n+1}.
+\end{equation}
+Both index conditions hold if and only if $n \geq 2/\alpha - 1$, and
+the two indices are interior, $k_{\text{lo}} \geq 2$ and
+$k_{\text{hi}} \leq n-1$, if and only if $n \geq 4/\alpha - 1$.
+\end{proposition}
+
+\begin{proof}
+By exchangeability and continuity the rank
+$R = 1 + \#\{i \leq n : \epsilon_i < \epsilon_{n+1}\}$ is uniform on
+$\{1,\ldots,n+1\}$.  Since
+$\epsilon_{n+1} < \epsilon_{(k)} \iff R \leq k$, we have
+$\Prob(\epsilon_{n+1} < \epsilon_{(k_{\text{lo}})})
+= k_{\text{lo}}/(n+1) \leq \alpha/2$ because
+$k_{\text{lo}} \leq (n+1)\alpha/2$, and
+$\Prob(\epsilon_{n+1} > \epsilon_{(k_{\text{hi}})})
+= (n+1-k_{\text{hi}})/(n+1) \leq \alpha/2$ because
+$k_{\text{hi}} \geq (n+1)(1-\alpha/2)$.  Adding the two gives the lower
+bound in~\eqref{eq:exact_coverage}; the upper bound follows because
+each floor and each ceiling moves its index by less than one, so each
+tail probability is at least $\alpha/2 - 1/(n+1)$.  For the index
+conditions, $k_{\text{lo}} \geq 1$ requires
+$(n+1)\alpha/2 \geq 1$ and $k_{\text{hi}} \leq n$ requires
+$(n+1)(1-\alpha/2) \leq n$, and both reduce to
+$n \geq 2/\alpha - 1$; the interior versions replace the right-hand
+sides by $2$ and $n-1$ and reduce to $n \geq 4/\alpha - 1$.
+\end{proof}
+
+\begin{remark}[What the proposition does and does not deliver here]
+\label{rem:finite_caveat}
+Applied to a season buffer, Proposition~\ref{prop:finite_sample} says
+that the interval of Section~\ref{sec:algorithm:defects} covers at
+least $1-\alpha$ whatever $\Ts$ is, provided only that
+$\Ts \geq 2/\alpha - 1$ and that the season's errors are exchangeable
+with the one being predicted.  That is a stronger statement than
+Theorem~\ref{thm:strat_coverage} and it does not weaken as the buffer
+shortens; the upper bound $1-\alpha + 2/(\Ts+1)$ is what makes the
+interval conservative rather than invalid at $\Ts = 20$, and it is
+$0.995$ there, which is why the scheme overshoots in
+Section~\ref{sec:simulations:e7schemes} and on the export application.
+
+Two things stand between the proposition and the algorithm, and both
+are inherited rather than introduced.  The buffer holds leave-one-out
+residuals rather than errors, so exchangeability with the test residual
+holds only up to the estimation error that
+Assumption~\ref{ass:strat_a2} controls, and the coupling of
+Lemma~\ref{lem:coupling} converts that into the same
+$\deltaTs$ terms that already appear in
+Theorem~\ref{thm:strat_coverage}.  And the sliding-window update makes
+the buffer depend on the recent past, so exchangeability is exact only
+within a season under Assumption~\ref{ass:strat_a1}.  We therefore
+read~\eqref{eq:exact_coverage} as the explanation of what
+Section~\ref{sec:simulations:e6constr} measures rather than as a
+theorem about the deployed algorithm, and we note that the measured
+coverage, $0.904$ at $n = 20$ and $0.901$ at $n = 500$, sits where the
+proposition says it should.
+\end{remark}
+
+%------------------------------------------------------------
+\subsection{Coverage Along the Family}
+\label{sec:theory:family}
+%------------------------------------------------------------
+
+The family~\eqref{eq:family} interpolates between two estimators of the
+same quantile, one of which is consistent for it and one of which is not
+unless Assumption~\ref{ass:seasonal} holds.  The following bound says what
+that costs.
+
+\begin{proposition}[Coverage of the interpolated interval]
+\label{prop:family_coverage}
+Let Assumptions~\ref{ass:strat_a1} and~\ref{ass:strat_a2} hold and let
+$F_{\sstar}$ be Lipschitz with constant $L_{\sstar}$.  Write
+$\hat{C}_{T+1}^{\alpha,\lambda}$ for the interval built from
+$\hat{\theta}^{\lambda}$ in~\eqref{eq:family} at the same quantile levels
+as the stratified interval, and let
+\[
+  d_{\text{lo}}
+  = \hat{\theta}^{N}(\beta) - \hat{\theta}^{S}(\beta),
+  \qquad
+  d_{\text{hi}}
+  = \hat{\theta}^{N}(1-\alpha+\beta) - \hat{\theta}^{S}(1-\alpha+\beta).
+\]
+Then, for every $\lambda \in [0,1]$,
+\begin{equation}
+  \label{eq:family_bound}
+  \bigl|
+    \Prob\bigl(Y_{T+1} \in \hat{C}_{T+1}^{\alpha,\lambda}
+               \mid X_{T+1} = x_{T+1}\bigr) - (1-\alpha)
+  \bigr|
+  \;\leq\;
+  12\sqrt{\frac{\log(16\Ts)}{\Ts}}
+  + 4(L_{\sstar}+1)\bigl(\deltaTs^{2/3} + \deltaTs\bigr)
+  + (1-\lambda) L_{\sstar}\bigl(|d_{\text{lo}}| + |d_{\text{hi}}|\bigr).
+\end{equation}
+Moreover $|d_{\text{lo}}| + |d_{\text{hi}}| \leq
+2\max_p|\Delta_{\sstar}(p)| + O_p(\Ts^{-1/2})$, so that:
+\textup{(i)} at $\lambda = 1$ the bound is exactly that of
+Theorem~\ref{thm:strat_coverage}; \textup{(ii)} if
+Assumption~\ref{ass:seasonal} holds, so that
+$\Delta_{\sstar} \equiv 0$, the third term is $O_p(\Ts^{-1/2})$ for every
+fixed $\lambda$ and the whole family is asymptotically valid;
+\textup{(iii)} if $\Delta_{\sstar} \not\equiv 0$, asymptotic validity
+requires $\lambda \to 1$.
+\end{proposition}
+
+\begin{proof}
+Conditional on the calibration buffers, the two intervals have the same
+centre and endpoints differing by $(1-\lambda)d_{\text{lo}}$ and
+$(1-\lambda)d_{\text{hi}}$.  For any $a \leq b$ and $a' \leq b'$,
+$|[F_{\sstar}(b) - F_{\sstar}(a)] - [F_{\sstar}(b') - F_{\sstar}(a')]|
+\leq L_{\sstar}(|b-b'| + |a-a'|)$ by Lipschitz continuity, so the two
+conditional coverage probabilities differ by at most
+$(1-\lambda)L_{\sstar}(|d_{\text{lo}}| + |d_{\text{hi}}|)$.  Adding this
+to the bound of Theorem~\ref{thm:strat_coverage} and integrating over the
+buffers gives~\eqref{eq:family_bound}.  The statement about
+$d$ follows from writing $d = \Delta_{\sstar} + (\hat{\theta}^{N} -
+\theta^{N}) - (\hat{\theta}^{S} - \theta^{S})$ and applying the quantile
+central limit theorem to each estimation error.
+\end{proof}
+
+\begin{remark}[Where the interior of the family is worth visiting]
+\label{rem:optimal_lambda}
+Bound~\eqref{eq:family_bound} is monotone in $\lambda$ and therefore
+recommends $\lambda = 1$, which is an artefact of bounding a bias
+without crediting the variance it buys.  The mean squared error of
+$\hat{\theta}^{\lambda}(p)$ tells the other half.  Writing
+$\Delta = \Delta_{\sstar}(p)$, $v_S = \Var(\hat{\theta}^{S})$,
+$v_N = \Var(\hat{\theta}^{N})$ and $c$ for their covariance,
+\[
+  \mathrm{MSE}(\lambda)
+  = (1-\lambda)^2\Delta^2 + \lambda^2 v_S + (1-\lambda)^2 v_N
+    + 2\lambda(1-\lambda)c ,
+  \qquad
+  \lambda^{*} = \frac{\Delta^2 + v_N - c}
+                     {\Delta^2 + v_S + v_N - 2c},
+\]
+the denominator being $\Delta^2 + \Var(\hat{\theta}^{S} -
+\hat{\theta}^{N})$ and the second derivative twice that, so
+$\lambda^{*}$ minimises.  Both clips can bind: $\lambda^{*} < 0$ whenever
+$c > \Delta^2 + v_N$, which at $\Delta = 0$ happens as soon as the
+correlation between the two estimators exceeds $\sqrt{v_N/v_S}$, and the
+two are computed from overlapping data.  Under
+Assumption~\ref{ass:seasonal}, $\Delta = 0$ and $\lambda^{*}$ settles at a
+constant determined by the ratio $v_N/v_S$ and that correlation, neither
+tending to zero nor to one.  When $\Delta \neq 0$ is fixed,
+$1 - \lambda^{*} = (v_S - c)/(\Delta^2 + v_S + v_N - 2c) =
+O(1/(\Ts\Delta^2))$, so the shrinkage bias is $O(1/(\Ts\Delta))$, of
+smaller order than the $O(\Ts^{-1/2})$ sampling error, and the
+optimally weighted estimator has the same first-order limit law as the
+stratified one while strictly improving finite-sample mean squared error.
+That equivalence is pointwise in $\Delta$ and informative only while
+$\Ts\Delta^2 \to \infty$: along sequences with
+$\Delta \asymp \Ts^{-1/2}$, which is exactly the case of a shape
+discrepancy comparable to sampling noise, $1 - \lambda^{*}$ stays bounded
+away from zero and the shrinkage bias is of the same order as the standard
+error.
+\end{remark}
+
+\begin{remark}[What is not claimed for the data-driven asymmetry]
+\label{rem:beta_honesty}
+The same scruple applies one level up, and the paper is explicit about
+it because its own experiments measure the consequence.
+Theorem~\ref{thm:strat_coverage} is stated for a \emph{fixed}
+$\beta \in [0,\alpha]$, and its proof uses that fixed value at the
+point where the Probability Integral Transform is applied
+(Appendix~\ref{app:proofs:thm1s}, Step~5).  The interval actually
+deployed in~\eqref{eq:enbpis_interval} uses
+$\hat{\beta}^{(\sstar)}$, the minimiser of the width over a grid
+computed from the same buffer, so the theorem does not cover it.  This
+is inherited from \citet{xu2023conformal} rather than introduced here,
+but Section~\ref{sec:simulations:e6constr} shows that at the buffer
+lengths of interest the gap is not a formality: choosing the asymmetry
+from the buffer costs between four and six percentage points of
+coverage.  A bound that covered $\hat{\beta}^{(\sstar)}$ would have to
+pay for the selection, and we do not have one; what we do instead is
+fix $\beta = \alpha/2$ when the buffer is short, which restores the
+finite-sample guarantee the fixed-$\beta$ theory describes.
+\end{remark}
+
+\begin{remark}[What is not claimed for the data-driven weight]
+\label{rem:lambda_honesty}
+Remark~\ref{rem:optimal_lambda} concerns a deterministic $\lambda$.  The
+weight actually used in Section~\ref{sec:simulations} is chosen from the
+same residuals that form the buffer, so $\hat{\theta}^{\hat\lambda}$ is a
+nonlinear function of the calibration sample and neither the mean squared
+error calculation above nor the conformal exchangeability argument
+transfers to it.  We therefore claim nothing finite-sample for it and
+document its behaviour by simulation.  A moment estimator of $\lambda^{*}$
+built from a bootstrap of $(v_S, v_N, c)$ was tried and abandoned:
+Section~\ref{sec:simulations:e6constr} reports why.
 \end{remark}

@@ -1,0 +1,35 @@
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment E4: null (homoskedastic) case,
+         $\sigma_s = 1$ for every $s$, $T = 240$,
+         $\Ts = 20$, $\alpha = 0.10$,
+         $n_{\mathrm{rep}} = 200$.  Monte Carlo standard errors
+         are in parentheses.  The gap between the two columns is
+         the cost of stratification when there is no seasonal
+         bias to remove.}
+\label{tab:e4_null}
+\begin{tabular}{l cc cc}
+\toprule
+ & \multicolumn{2}{c}{Coverage} & \multicolumn{2}{c}{Width} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Month & Pooled & \texttt{EnbPI-S} & Pooled & \texttt{EnbPI-S} \\
+\midrule
+Jan & 0.880 (0.007) & 0.786 (0.009) & 4.74 & 3.92 \\
+Feb & 0.886 (0.007) & 0.789 (0.009) & 4.74 & 3.87 \\
+Mar & 0.879 (0.007) & 0.786 (0.009) & 4.74 & 3.86 \\
+Apr & 0.881 (0.007) & 0.782 (0.009) & 4.74 & 3.99 \\
+May & 0.880 (0.007) & 0.802 (0.009) & 4.74 & 4.09 \\
+Jun & 0.873 (0.007) & 0.789 (0.009) & 4.74 & 3.93 \\
+Jul & 0.879 (0.008) & 0.788 (0.009) & 4.74 & 3.93 \\
+Aug & 0.881 (0.007) & 0.797 (0.009) & 4.74 & 3.87 \\
+Sep & 0.879 (0.008) & 0.799 (0.009) & 4.74 & 4.01 \\
+Oct & 0.891 (0.007) & 0.792 (0.009) & 4.74 & 3.91 \\
+Nov & 0.879 (0.008) & 0.781 (0.009) & 4.74 & 3.93 \\
+Dec & 0.891 (0.007) & 0.777 (0.010) & 4.74 & 3.87 \\
+\midrule
+Mean & 0.881 & 0.789 & 4.74 & 3.93 \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Nominal coverage $1-\alpha = 0.90$; the theoretical seasonal bias is $b_{s^*} = 0$ throughout.}\\
+\end{tabular}
+\end{table}

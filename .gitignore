@@ -44,3 +44,15 @@ Thumbs.db
 
 # Obsidian study vault (personal defense prep, not part of the paper)
 vault_defesa/
+
+# Internal review notes and scratch scripts: kept locally, never part of
+# the public replication archive
+RELATORIO_REVISAO_FINAL.md
+deep_research/
+check_misses.py
+check_sim.py
+test_series.py
+test_long_series.py
+
+# Run logs from the Monte Carlo scripts
+tables/*_run.log

@@ -1,11 +1,11 @@
 % ============================================================
-% APPENDIX B — ADDITIONAL SIMULATION TABLES
+% APPENDIX B - ADDITIONAL SIMULATION TABLES
 % ============================================================
 \section{Additional Simulation Tables}
 \label{app:additional}
 
 Tables~\ref{tab:e1_coverage_T120}--\ref{tab:e1_coverage_T480}
-repeat the two-method (Pooled vs \texttt{EnbPI-S}) coverage
+repeat the two-method (Pooled against \texttt{EnbPI-S}) coverage
 analysis of Section~\ref{sec:simulations:e1} for
 $T \in \{120, 240, 480\}$.
 The three-method tables (including SARIMA-Gaussian) are
@@ -20,27 +20,30 @@ replication archive.
 \input{tables/tab_E1_T480}
 
 % ============================================================
-% APPENDIX B.2 — EMPIRICAL COVERAGE DETAIL
+% APPENDIX B.2 - EXPERIMENTS E3, E4 AND E5
 % ============================================================
-\subsection{Per-Season Empirical Coverage}
-\label{app:empirical_coverage}
+\subsection{Heteroskedasticity Intensity, Null Case and Predictor
+            Robustness}
+\label{app:e3e5}
 
-Figure~\ref{fig:empirical_food_coverage} shows per-season
-empirical coverage for the food-at-home IPCA application
-($T_s = 20$, $n_s = 10$ per season in the test period).
-Because each bar is based on only ten observations,
-standard errors are $\approx 0.14$; the pattern should be
-read in conjunction with the simulation results of
-Experiment~E2 (Table~\ref{tab:e2_stratum_size}), which
-provide the finite-sample reference distribution.
+Tables~\ref{tab:e3_intensity}--\ref{tab:e5_predictor} collect the
+detail of Experiments E3, E4 and E5, discussed in
+Sections~\ref{sec:simulations:e3}--\ref{sec:simulations:e5}.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{figures/fig_empirical_food_coverage}
-  \caption{Per-season empirical coverage for food-at-home IPCA
-           forecasting (test: 2015--2024).
-           The horizontal dashed line is the $90\%$ nominal level.
-           Each bar is based on $n_s = 10$ observations;
-           individual bars carry standard errors of $\approx 0.14$.}
-  \label{fig:empirical_food_coverage}
-\end{figure}
+\input{tables/tab_E3}
+
+\input{tables/tab_E4}
+
+\input{tables/tab_E5}
+
+% ============================================================
+% APPENDIX B.3 - LINE-SEARCH DETAIL
+% ============================================================
+\subsection{Line-Search Detail}
+\label{app:linesearch}
+
+Table~\ref{tab:e9_linesearch} reports the experiment behind
+Figure~\ref{fig:linesearch_cost} in full, with the interval widths and a
+third grid size.
+
+\input{tables/tab_E9_linesearch}

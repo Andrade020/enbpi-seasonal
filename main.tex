@@ -19,8 +19,6 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
-\usepackage{mathtools}   % dcases, coloneqq, etc.
-\usepackage{bm}          % \bm for bold math
 
 % --- Layout ---
 \usepackage[margin=2.5cm]{geometry}
@@ -32,9 +30,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{array}
-\usepackage{multirow}
 \usepackage[font=small,labelfont=bf]{caption}
-\usepackage{subcaption}
 \usepackage{float}
 
 % --- Algorithms ---
@@ -61,10 +57,6 @@
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
 
-% --- Internal comments (remove before submission) ---
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
-\newcommand{\note}[1]{\textcolor{blue!70!black}{\textbf{[NOTE: #1]}}}
-
 % ============================================================
 %  THEOREM ENVIRONMENTS
 % ============================================================
@@ -77,11 +69,9 @@
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{assumption}{Assumption}
-\newtheorem{algorithm_def}[theorem]{Algorithm}  % named differently to avoid clash
 
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
-\newtheorem{example}[theorem]{Example}
 
 % ============================================================
 %  NOTATION MACROS
@@ -91,40 +81,15 @@
 % --- Sets and indices ---
 \newcommand{\calT}{\mathcal{T}}       % index set T_s for stratum s
 \newcommand{\calA}{\mathcal{A}}       % prediction algorithm
-\newcommand{\calF}{\mathcal{F}}       % filtration
 \newcommand{\calH}{\mathcal{H}}       % set of high-volatility seasons
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\mathbb{R}}
-
-% --- Time series quantities ---
-\newcommand{\Yt}{Y_t}                  % response at t
-\newcommand{\Xt}{X_t}                  % feature vector at t
-\newcommand{\eps}{\epsilon_t}          % true error at t
-\newcommand{\epshat}{\hat{\epsilon}}   % estimated (LOO) residual
-\newcommand{\fhat}{\hat{f}}            % trained predictor
-\newcommand{\floo}{\hat{f}_{-t}}       % LOO predictor at t
-
-% --- CDFs ---
-\newcommand{\Ft}{F_t}                  % true CDF of epsilon_t
-\newcommand{\Fs}{F_s}                  % CDF of season s
-\newcommand{\Fbar}{\bar{F}}            % pooled (average) CDF
-\newcommand{\Ftilde}{\tilde{F}}        % empirical CDF of true errors
-\newcommand{\Fhat}{\hat{F}}            % empirical CDF of LOO residuals
-\newcommand{\FhatS}{\hat{F}_{s^*}}     % stratified empirical CDF
-
-% --- Prediction intervals ---
-\newcommand{\Chat}{\hat{C}_{t}^{\alpha}}              % EnbPI interval at t
-\newcommand{\Chatpool}{\hat{C}_{t}^{\alpha,\text{pool}}}   % pooled
-\newcommand{\Chatstrat}{\hat{C}_{t}^{\alpha,\text{strat}}} % stratified
-\newcommand{\Coracle}{C_{t}^{\alpha}}                 % oracle interval
 
 % --- Seasonal quantities ---
 \newcommand{\sstar}{s^*}               % season of prediction point T+1
 \newcommand{\Sper}{S}                  % seasonal period
 \newcommand{\Ts}{T_{\sstar}}           % stratum size for season s*
 \newcommand{\bsstar}{b_{\sstar}}       % seasonal bias
-\newcommand{\sigt}{\sigma_{s(t)}}      % seasonal standard deviation
-\newcommand{\sigs}{\sigma_s}           % std at season s
 
 % --- Estimation quality ---
 \newcommand{\deltaT}{\delta_T}         % estimation quality (full sample)
@@ -132,16 +97,13 @@
 
 % --- Quantiles & p-values ---
 \newcommand{\betahat}{\hat{\beta}}     % optimal lower quantile
-\newcommand{\phat}{\hat{p}_{T+1}}     % empirical p-value
 \newcommand{\Quant}[2]{Q_{#1}\!\left(#2\right)} % Q_alpha(set)
 
 % --- Other ---
-\newcommand{\abs}[1]{\left|#1\right|}
-\newcommand{\norm}[1]{\left\|#1\right\|}
 \newcommand{\Ind}[1]{\mathbf{1}\!\left\{#1\right\}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Prob}{\mathbb{P}}
-\newcommand{\given}{\,\middle|\,}
+\newcommand{\Var}{\operatorname{Var}}
 
 % ============================================================
 %  DOCUMENT
@@ -149,17 +111,30 @@
 \begin{document}
 
 % --- Title ---
-\title{Distribution-Free Prediction Intervals for Seasonally
-       Heteroskedastic Time Series\thanks{%
-         Replication code available at
-         \url{https://github.com/Andrade020/enbpi-seasonal}.}}
+% Build the anonymous (double-blind) version with
+%     pdflatex -jobname=main_blind "\def\blindmode{1}\input{main}"
+% and the ordinary version with a plain "pdflatex main".
+\providecommand{\blindmode}{0}
 
-\author{Lucas Rafael de Andrade\thanks{%
-        Programa de P\'{o}s-Gradua\c{c}\~{a}o em Ci\^{e}ncias Econ\^{o}micas,
-        Universidade do Estado do Rio de Janeiro (UERJ).
-        E-mail: \texttt{rafael.lucas@posgraduacao.uerj.br}.}}
+\ifnum\blindmode=1
+  \title{Distribution-Free Prediction Intervals for Seasonally
+         Heteroskedastic Time Series\thanks{%
+           Code and data replicating every table and figure are
+           available and will be deposited in a public archive on
+           publication.}}
+  \author{}
+\else
+  \title{Distribution-Free Prediction Intervals for Seasonally
+         Heteroskedastic Time Series\thanks{%
+           Replication code available at
+           \url{https://github.com/Andrade020/enbpi-seasonal}.}}
+  \author{Lucas Rafael de Andrade\thanks{%
+          Programa de P\'{o}s-Gradua\c{c}\~{a}o em Ci\^{e}ncias Econ\^{o}micas,
+          Universidade do Estado do Rio de Janeiro (UERJ).
+          E-mail: \texttt{rafael.lucas@posgraduacao.uerj.br}.}}
+\fi
 
-\date{\today}
+\date{July 2026}
 
 \maketitle
 

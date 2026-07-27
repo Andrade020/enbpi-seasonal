@@ -1,0 +1,24 @@
+\begin{table}[ht]
+\centering
+\caption{Experiment E5: predictor robustness
+         ($T = 240$, $\Ts = 20$, $\sigma_{\mathrm{high}} = 2$,
+         $\alpha = 0.10$; $n_{\mathrm{rep}} = 200$ for Ridge and
+         $n_{\mathrm{rep}} = 100$ for the Random Forest).
+         Coverage entries are averages over the seasons in each
+         group.  The seasonal pattern is the same under both
+         base learners, which is what makes the gain from
+         stratification model-agnostic.}
+\label{tab:e5_predictor}
+\begin{tabular}{l l cc c c}
+\toprule
+Base learner & Method & High-vol.\ & Low-vol.\ & Spread & Width ratio \\
+\midrule
+Ridge & Pooled & 0.771 & 0.933 & 0.183 & 1.00 \\
+ & \texttt{EnbPI-S} & 0.796 & 0.779 & 0.034 & 1.86 \\
+\midrule
+Random Forest & Pooled & 0.767 & 0.925 & 0.179 & 1.00 \\
+ & \texttt{EnbPI-S} & 0.786 & 0.777 & 0.035 & 1.81 \\
+\bottomrule
+\multicolumn{6}{l}{\footnotesize Width ratio = mean high-volatility width / mean low-volatility width; the true scale ratio is $2$.}\\
+\end{tabular}
+\end{table}

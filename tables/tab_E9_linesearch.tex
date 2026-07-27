@@ -1,0 +1,44 @@
+\begin{table}[ht]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Experiment E9: what the minimum-width line search costs.
+         Coverage and mean width of a $90\%$ interval built from a
+         single buffer of $n$ residuals, with finite-sample conformal
+         levels throughout, so that the only difference across
+         columns is whether the asymmetry $\beta$ is fixed at
+         $\alpha/2$ ($m = 1$) or chosen as the narrowest of $m$
+         candidates.  Symmetric residuals are standardised $t_3$,
+         skewed ones standardised lognormal; $3000$ buffers per cell,
+         evaluated against $200\,000$ draws.}
+\label{tab:e9_linesearch}
+\begin{tabular}{r cc cc cc}
+\toprule
+ & \multicolumn{2}{c}{$m = 1$ (fixed)} & \multicolumn{2}{c}{$m = 21$} & \multicolumn{2}{c}{$m = 201$} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+$n$ & Coverage & Width & Coverage & Width & Coverage & Width \\
+\midrule
+\multicolumn{7}{l}{\emph{Symmetric residuals}} \\
+10 & 0.819 & 2.92 & 0.816 & 2.89 & 0.818 & 2.94 \\
+20 & 0.904 & 3.95 & 0.842 & 2.63 & 0.844 & 2.63 \\
+35 & 0.944 & 4.90 & 0.880 & 2.98 & 0.881 & 3.00 \\
+50 & 0.922 & 3.54 & 0.880 & 2.80 & 0.880 & 2.79 \\
+100 & 0.901 & 2.88 & 0.888 & 2.72 & 0.888 & 2.72 \\
+200 & 0.901 & 2.80 & 0.891 & 2.68 & 0.892 & 2.70 \\
+500 & 0.901 & 2.75 & 0.896 & 2.71 & 0.895 & 2.69 \\
+\midrule
+\multicolumn{7}{l}{\emph{Skewed residuals}} \\
+10 & 0.818 & 2.48 & 0.817 & 2.48 & 0.819 & 2.48 \\
+20 & 0.907 & 3.40 & 0.853 & 1.96 & 0.854 & 2.02 \\
+35 & 0.944 & 4.25 & 0.888 & 2.01 & 0.889 & 2.01 \\
+50 & 0.921 & 3.07 & 0.881 & 1.74 & 0.881 & 1.74 \\
+100 & 0.900 & 2.47 & 0.890 & 1.69 & 0.890 & 1.69 \\
+200 & 0.900 & 2.39 & 0.895 & 1.67 & 0.894 & 1.66 \\
+500 & 0.900 & 2.34 & 0.897 & 1.65 & 0.897 & 1.65 \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Nominal coverage $0.90$.  The upper
+ conformal level is below one only for $n \geq 39$ at this nominal}\\
+\multicolumn{7}{l}{\footnotesize level, so for shorter buffers the
+ upper endpoint is the largest residual in the buffer.}\\
+\end{tabular}
+\end{table}
